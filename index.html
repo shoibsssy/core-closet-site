@@ -7,7 +7,7 @@
 <meta name="description" content="Core Closet — combat-inspired streetwear. Sportswear, casuals and everyday essentials, built for the ring and worn on the streets.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Space+Mono:wght@400;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -21,6 +21,11 @@
   </div>
   <div class="preloader__panel preloader__panel--top"></div>
   <div class="preloader__panel preloader__panel--bottom"></div>
+</div>
+
+<!-- ============ Utility topbar ============ -->
+<div class="topbar" aria-hidden="true">
+  <span>Sportswear</span><span>Casuals</span><span>Everyday Essentials</span>
 </div>
 
 <!-- ============ Header ============ -->
@@ -73,7 +78,7 @@
         <div class="hero-slide__scrim"></div>
         <div class="hero-slide__copy">
           <p class="hero-slide__kicker">Collection 01</p>
-          <h2 class="hero-slide__title">Sumo&nbsp;Oni</h2>
+          <h2 class="hero-slide__title"><span class="mask"><span class="mask__in">Sumo&nbsp;Oni</span></span></h2>
           <p class="hero-slide__tag">Half sumo. Full demon.</p>
         </div>
       </div>
@@ -82,7 +87,7 @@
         <div class="hero-slide__scrim"></div>
         <div class="hero-slide__copy">
           <p class="hero-slide__kicker">Collection 02</p>
-          <h2 class="hero-slide__title">333&nbsp;Venom</h2>
+          <h2 class="hero-slide__title"><span class="mask"><span class="mask__in">333&nbsp;Venom</span></span></h2>
           <p class="hero-slide__tag">Strike first. Strike hard.</p>
         </div>
       </div>
@@ -91,7 +96,7 @@
         <div class="hero-slide__scrim"></div>
         <div class="hero-slide__copy">
           <p class="hero-slide__kicker">Collection 03</p>
-          <h2 class="hero-slide__title">Demon&nbsp;Crossbones</h2>
+          <h2 class="hero-slide__title"><span class="mask"><span class="mask__in">Demon&nbsp;Crossbones</span></span></h2>
           <p class="hero-slide__tag">No mercy. No retreat.</p>
         </div>
       </div>
@@ -100,7 +105,7 @@
         <div class="hero-slide__scrim"></div>
         <div class="hero-slide__copy">
           <p class="hero-slide__kicker">Collection 04</p>
-          <h2 class="hero-slide__title">Fear&nbsp;God</h2>
+          <h2 class="hero-slide__title"><span class="mask"><span class="mask__in">Fear&nbsp;God</span></span></h2>
           <p class="hero-slide__tag">Snakeskin. No weakness.</p>
         </div>
       </div>
@@ -143,14 +148,14 @@
     <div class="container">
       <p class="statement__eyebrow reveal-up">— The Manifesto —</p>
       <h2 class="statement__words" id="statementWords">
-        <span class="word">Built</span>
-        <span class="word">for</span>
-        <span class="word">the</span>
-        <span class="word statement__word--red">ring.</span>
-        <span class="word">Worn</span>
-        <span class="word">on</span>
-        <span class="word">the</span>
-        <span class="word statement__word--gold">streets.</span>
+        <span class="word"><span class="word__in">Built</span></span>
+        <span class="word"><span class="word__in">for</span></span>
+        <span class="word"><span class="word__in">the</span></span>
+        <span class="word statement__word--red"><span class="word__in">ring.</span></span>
+        <span class="word"><span class="word__in">Worn</span></span>
+        <span class="word"><span class="word__in">on</span></span>
+        <span class="word"><span class="word__in">the</span></span>
+        <span class="word statement__word--gold"><span class="word__in">streets.</span></span>
       </h2>
       <p class="statement__sub reveal-up">
         Core Closet fuses combat-sports culture with everyday streetwear — rash guards, fight
@@ -171,6 +176,7 @@
       <div class="product-grid">
         <article class="product-card reveal-up">
           <a href="#" class="product-card__img">
+            <span class="product-card__index">No. 01</span>
             <span class="badge-new">New</span>
             <img src="assets/img/fighter-sumo-oni.jpg" alt="Sumo Oni Rashguard Set" loading="lazy">
           </a>
@@ -178,12 +184,13 @@
             <p class="product-card__meta">Half sumo. Full demon.</p>
             <h3>Sumo Oni Rashguard Set</h3>
             <p class="price">₹3,799</p>
-            <a href="#" class="btn btn--outline-red btn--sm">Shop Now</a>
+            <a href="#" class="link-cta">Shop Now <span class="arrow">→</span></a>
           </div>
         </article>
 
         <article class="product-card reveal-up">
           <a href="#" class="product-card__img">
+            <span class="product-card__index">No. 02</span>
             <span class="badge-new">New</span>
             <img src="assets/img/fighter-333-venom.jpg" alt="333 Venom Set" loading="lazy">
           </a>
@@ -191,24 +198,26 @@
             <p class="product-card__meta">Strike first. Strike hard.</p>
             <h3>333 Venom Set</h3>
             <p class="price">₹3,599</p>
-            <a href="#" class="btn btn--outline-red btn--sm">Shop Now</a>
+            <a href="#" class="link-cta">Shop Now <span class="arrow">→</span></a>
           </div>
         </article>
 
         <article class="product-card reveal-up">
           <a href="#" class="product-card__img">
+            <span class="product-card__index">No. 03</span>
             <img src="assets/img/fighter-demon-crossbones.jpg" alt="Demon Crossbones Set" loading="lazy">
           </a>
           <div class="product-card__info">
             <p class="product-card__meta">No mercy. No retreat.</p>
             <h3>Demon Crossbones Set</h3>
             <p class="price">₹3,499</p>
-            <a href="#" class="btn btn--outline-red btn--sm">Shop Now</a>
+            <a href="#" class="link-cta">Shop Now <span class="arrow">→</span></a>
           </div>
         </article>
 
         <article class="product-card reveal-up">
           <a href="#" class="product-card__img">
+            <span class="product-card__index">No. 04</span>
             <span class="badge-new">New</span>
             <img src="assets/img/fighter-feargod-snakeskin.jpg" alt="Fear God Snakeskin Set" loading="lazy">
           </a>
@@ -216,7 +225,7 @@
             <p class="product-card__meta">Snakeskin. No weakness.</p>
             <h3>Fear God Snakeskin Set</h3>
             <p class="price">₹3,899</p>
-            <a href="#" class="btn btn--outline-red btn--sm">Shop Now</a>
+            <a href="#" class="link-cta">Shop Now <span class="arrow">→</span></a>
           </div>
         </article>
       </div>

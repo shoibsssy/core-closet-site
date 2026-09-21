@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Brand-statement words: staggered reveal + per-word delay
   const statementWords = document.getElementById('statementWords');
   if (statementWords && 'IntersectionObserver' in window) {
-    const words = statementWords.querySelectorAll('.word');
+    const words = statementWords.querySelectorAll('.word__in');
     words.forEach((w, i) => { w.style.transitionDelay = `${i * 70}ms`; });
 
     const io = new IntersectionObserver((entries) => {
