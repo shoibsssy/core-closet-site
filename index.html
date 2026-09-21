@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Core Closet — Sportswear. Casuals. Everyday Essentials.</title>
+<meta name="description" content="Core Closet — combat-inspired streetwear. Sportswear, casuals and everyday essentials, built for the ring and worn on the streets.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============ Preloader ============ -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader__count" id="preloaderCount">0</div>
+  <div class="preloader__mark">
+    <img src="assets/img/logo-mark.png" alt="" class="preloader__logo" id="preloaderLogo">
+    <div class="preloader__drip"></div>
+  </div>
+  <div class="preloader__panel preloader__panel--top"></div>
+  <div class="preloader__panel preloader__panel--bottom"></div>
+</div>
+
+<!-- ============ Header ============ -->
+<header class="site-header" id="siteHeader">
+  <div class="container site-header__inner">
+    <a href="#" class="brand">
+      <img src="assets/img/logo-mark.png" alt="Core Closet" class="brand__logo">
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="#" class="is-active">Home</a>
+      <a href="#shop">Shop</a>
+      <a href="#collections">Collections</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="header-icons">
+      <button class="icon-btn" id="searchToggle" aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <a href="#" class="icon-btn" aria-label="Account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </a>
+      <a href="#cart" class="icon-btn icon-btn--cart" aria-label="Cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h2l1.6 10.4a2 2 0 0 0 2 1.6h7.3a2 2 0 0 0 2-1.6L20 8H7"/><circle cx="10" cy="21" r="1.2"/><circle cx="17" cy="21" r="1.2"/></svg>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="container search-overlay__inner">
+      <input type="search" placeholder="Search products…" aria-label="Search products">
+      <button id="searchClose" aria-label="Close search">&times;</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ============ Hero slider ============ -->
+  <section class="hero-slider" id="heroSlider">
+    <div class="hero-slider__track">
+      <div class="hero-slide is-active" data-index="0">
+        <div class="hero-slide__img" style="background-image:url(assets/img/fighter-sumo-oni.jpg)"></div>
+        <div class="hero-slide__scrim"></div>
+        <div class="hero-slide__copy">
+          <p class="hero-slide__kicker">Collection 01</p>
+          <h2 class="hero-slide__title">Sumo&nbsp;Oni</h2>
+          <p class="hero-slide__tag">Half sumo. Full demon.</p>
+        </div>
+      </div>
+      <div class="hero-slide" data-index="1">
+        <div class="hero-slide__img" style="background-image:url(assets/img/fighter-333-venom.jpg)"></div>
+        <div class="hero-slide__scrim"></div>
+        <div class="hero-slide__copy">
+          <p class="hero-slide__kicker">Collection 02</p>
+          <h2 class="hero-slide__title">333&nbsp;Venom</h2>
+          <p class="hero-slide__tag">Strike first. Strike hard.</p>
+        </div>
+      </div>
+      <div class="hero-slide" data-index="2">
+        <div class="hero-slide__img" style="background-image:url(assets/img/fighter-demon-crossbones.jpg)"></div>
+        <div class="hero-slide__scrim"></div>
+        <div class="hero-slide__copy">
+          <p class="hero-slide__kicker">Collection 03</p>
+          <h2 class="hero-slide__title">Demon&nbsp;Crossbones</h2>
+          <p class="hero-slide__tag">No mercy. No retreat.</p>
+        </div>
+      </div>
+      <div class="hero-slide" data-index="3">
+        <div class="hero-slide__img" style="background-image:url(assets/img/fighter-feargod-snakeskin.jpg)"></div>
+        <div class="hero-slide__scrim"></div>
+        <div class="hero-slide__copy">
+          <p class="hero-slide__kicker">Collection 04</p>
+          <h2 class="hero-slide__title">Fear&nbsp;God</h2>
+          <p class="hero-slide__tag">Snakeskin. No weakness.</p>
+        </div>
+      </div>
+    </div>
+
+    <a href="#shop" class="hero-slider__cta btn btn--outline">Shop The Drop <span class="arrow">→</span></a>
+
+    <div class="hero-slider__dots" id="heroDots">
+      <button class="hero-dot is-active" data-goto="0" aria-label="Slide 1"><span></span></button>
+      <button class="hero-dot" data-goto="1" aria-label="Slide 2"><span></span></button>
+      <button class="hero-dot" data-goto="2" aria-label="Slide 3"><span></span></button>
+      <button class="hero-dot" data-goto="3" aria-label="Slide 4"><span></span></button>
+    </div>
+
+    <div class="hero-slider__scroll-cue">
+      <span></span>Scroll
+    </div>
+  </section>
+
+  <!-- ============ Marquee ticker ============ -->
+  <div class="marquee marquee--dir1" aria-hidden="true">
+    <div class="marquee__track">
+      <span class="marquee__item">Sportswear <em>★</em> Casuals <em>★</em> Everyday Essentials <em>★</em></span>
+      <span class="marquee__item">Sportswear <em>★</em> Casuals <em>★</em> Everyday Essentials <em>★</em></span>
+      <span class="marquee__item">Sportswear <em>★</em> Casuals <em>★</em> Everyday Essentials <em>★</em></span>
+      <span class="marquee__item">Sportswear <em>★</em> Casuals <em>★</em> Everyday Essentials <em>★</em></span>
+    </div>
+  </div>
+  <div class="marquee marquee--dir2" aria-hidden="true">
+    <div class="marquee__track">
+      <span class="marquee__item">Built For The Ring <em>★</em> Worn On The Streets <em>★</em></span>
+      <span class="marquee__item">Built For The Ring <em>★</em> Worn On The Streets <em>★</em></span>
+      <span class="marquee__item">Built For The Ring <em>★</em> Worn On The Streets <em>★</em></span>
+      <span class="marquee__item">Built For The Ring <em>★</em> Worn On The Streets <em>★</em></span>
+    </div>
+  </div>
+
+  <!-- ============ Brand statement ============ -->
+  <section class="statement">
+    <div class="container">
+      <p class="statement__eyebrow reveal-up">— The Manifesto —</p>
+      <h2 class="statement__words" id="statementWords">
+        <span class="word">Built</span>
+        <span class="word">for</span>
+        <span class="word">the</span>
+        <span class="word statement__word--red">ring.</span>
+        <span class="word">Worn</span>
+        <span class="word">on</span>
+        <span class="word">the</span>
+        <span class="word statement__word--gold">streets.</span>
+      </h2>
+      <p class="statement__sub reveal-up">
+        Core Closet fuses combat-sports culture with everyday streetwear — rash guards, fight
+        shorts and tees built for fighters, worn by fans. Every drop carries the discipline of
+        the gym floor into the clothes you live in outside it.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ Product listings ============ -->
+  <section class="products" id="shop">
+    <div class="container">
+      <div class="section-head reveal-up">
+        <h2><span class="star">★</span> The Four Sets <span class="star">★</span></h2>
+        <a href="#" class="view-all">View All <span class="arrow">→</span></a>
+      </div>
+
+      <div class="product-grid">
+        <article class="product-card reveal-up">
+          <a href="#" class="product-card__img">
+            <span class="badge-new">New</span>
+            <img src="assets/img/fighter-sumo-oni.jpg" alt="Sumo Oni Rashguard Set" loading="lazy">
+          </a>
+          <div class="product-card__info">
+            <p class="product-card__meta">Half sumo. Full demon.</p>
+            <h3>Sumo Oni Rashguard Set</h3>
+            <p class="price">₹3,799</p>
+            <a href="#" class="btn btn--outline-red btn--sm">Shop Now</a>
+          </div>
+        </article>
+
+        <article class="product-card reveal-up">
+          <a href="#" class="product-card__img">
+            <span class="badge-new">New</span>
+            <img src="assets/img/fighter-333-venom.jpg" alt="333 Venom Set" loading="lazy">
+          </a>
+          <div class="product-card__info">
+            <p class="product-card__meta">Strike first. Strike hard.</p>
+            <h3>333 Venom Set</h3>
+            <p class="price">₹3,599</p>
+            <a href="#" class="btn btn--outline-red btn--sm">Shop Now</a>
+          </div>
+        </article>
+
+        <article class="product-card reveal-up">
+          <a href="#" class="product-card__img">
+            <img src="assets/img/fighter-demon-crossbones.jpg" alt="Demon Crossbones Set" loading="lazy">
+          </a>
+          <div class="product-card__info">
+            <p class="product-card__meta">No mercy. No retreat.</p>
+            <h3>Demon Crossbones Set</h3>
+            <p class="price">₹3,499</p>
+            <a href="#" class="btn btn--outline-red btn--sm">Shop Now</a>
+          </div>
+        </article>
+
+        <article class="product-card reveal-up">
+          <a href="#" class="product-card__img">
+            <span class="badge-new">New</span>
+            <img src="assets/img/fighter-feargod-snakeskin.jpg" alt="Fear God Snakeskin Set" loading="lazy">
+          </a>
+          <div class="product-card__info">
+            <p class="product-card__meta">Snakeskin. No weakness.</p>
+            <h3>Fear God Snakeskin Set</h3>
+            <p class="price">₹3,899</p>
+            <a href="#" class="btn btn--outline-red btn--sm">Shop Now</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Collab spotlight ============ -->
+  <section class="collab">
+    <div class="container collab__inner">
+      <p class="collab__eyebrow reveal-up">Limited Collab</p>
+      <div class="collab__frame reveal-up">
+        <img src="assets/img/collab-hello-kitty.jpg" alt="Core Closet x Hello Kitty — Fight Cute" loading="lazy">
+      </div>
+      <h2 class="reveal-up">Core Closet <em>×</em> Hello Kitty</h2>
+      <p class="reveal-up">Pink leopard. Oversized grins. Zero mercy. A one-off pairing of studio-grade fight gear with Sanrio's fiercest icon — soft on the outside, built like everything else we make.</p>
+      <a href="#contact" class="btn btn--outline reveal-up">Get Early Access <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+  <!-- ============ About the brand ============ -->
+  <section class="about" id="about">
+    <div class="about__claws" aria-hidden="true"></div>
+    <div class="container about__inner">
+      <div class="about__art reveal-left">
+        <img src="assets/img/fighter-demon-crossbones.jpg" alt="Core Closet — Demon Crossbones Set">
+      </div>
+      <div class="about__copy reveal-right">
+        <p class="eyebrow">The Brand</p>
+        <h2>Combat Culture.<br>Street Fit.</h2>
+        <p>
+          Core Closet was born out of the fight gym — the sweat, the tape, the ritual of
+          gearing up before you step through the ropes. We took that intensity and cut it into
+          streetwear: rash guards that double as statement tees, fight shorts built for
+          everyday movement, graphics pulled straight from the culture.
+        </p>
+        <p>
+          No filler. No soft edges. Just gear made for people who train hard and dress like
+          it — in the ring, or on the block.
+        </p>
+        <a href="#shop" class="btn btn--gold">Explore Collections <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Social strip ============ -->
+  <section class="social-strip">
+    <div class="social-strip__head container">
+      <h2>Follow The Movement</h2>
+      <a href="#" class="btn btn--outline">@coreclosetofficial <span class="arrow">→</span></a>
+    </div>
+    <div class="social-strip__track">
+      <img src="assets/img/fighter-sumo-oni.jpg" alt="" loading="lazy">
+      <img src="assets/img/fighter-333-venom.jpg" alt="" loading="lazy">
+      <img src="assets/img/fighter-demon-crossbones.jpg" alt="" loading="lazy">
+      <img src="assets/img/fighter-feargod-snakeskin.jpg" alt="" loading="lazy">
+      <img src="assets/img/collab-hello-kitty.jpg" alt="" loading="lazy">
+      <img src="assets/img/fighter-sumo-oni.jpg" alt="" loading="lazy">
+      <img src="assets/img/fighter-333-venom.jpg" alt="" loading="lazy">
+      <img src="assets/img/fighter-demon-crossbones.jpg" alt="" loading="lazy">
+      <img src="assets/img/fighter-feargod-snakeskin.jpg" alt="" loading="lazy">
+      <img src="assets/img/collab-hello-kitty.jpg" alt="" loading="lazy">
+    </div>
+  </section>
+</main>
+
+<!-- ============ Footer ============ -->
+<footer class="site-footer" id="contact">
+  <img src="assets/img/logo-tribal.png" alt="" class="site-footer__tribal" aria-hidden="true">
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <img src="assets/img/logo-mark.png" alt="Core Closet" class="footer__logo">
+      <p>Sportswear. Casuals. Everyday Essentials. Built for the ring, worn on the streets.</p>
+      <div class="footer__social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg></a>
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 3h-2a5 5 0 0 0-5 5v2H6v4h2v7h4v-7h3l1-4h-4V8a1 1 0 0 1 1-1h3z"/></svg></a>
+        <a href="#" aria-label="X"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l16 16M20 4L4 20"/></svg></a>
+      </div>
+    </div>
+
+    <div class="footer__col">
+      <h4>Shop</h4>
+      <a href="#">Sportswear</a>
+      <a href="#">Casuals</a>
+      <a href="#">Everyday Essentials</a>
+      <a href="#">All Sets</a>
+    </div>
+
+    <div class="footer__col">
+      <h4>Company</h4>
+      <a href="#about">About Us</a>
+      <a href="#contact">Contact</a>
+      <a href="#">Wholesale Inquiries</a>
+      <a href="#">Store Locator</a>
+    </div>
+
+    <div class="footer__col">
+      <h4>Help</h4>
+      <a href="#">Shipping &amp; Returns</a>
+      <a href="#">Size Guide</a>
+      <a href="#">FAQs</a>
+      <a href="#">Track Order</a>
+    </div>
+  </div>
+
+  <div class="container footer__bottom">
+    <p>&copy; 2026 Core Closet. All rights reserved.</p>
+    <a href="mailto:wholesale@coreclosetofficial.com" class="footer__email">wholesale@coreclosetofficial.com</a>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
