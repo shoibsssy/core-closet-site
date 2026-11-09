@@ -7,33 +7,35 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================================
   const preloader = document.getElementById('preloader');
   const preloaderCount = document.getElementById('preloaderCount');
+  const introSkip = document.getElementById('introSkip');
 
-  if (preloader && preloaderCount) {
+  if (preloader) {
     document.body.classList.add('no-scroll');
+    let introHandle = null;
+    let closed = false;
 
-    requestAnimationFrame(() => preloader.classList.add('is-visible'));
-
-    const duration = 1900;
-    const start = performance.now();
-
-    const tick = (now) => {
-      const elapsed = now - start;
-      const pct = Math.min(100, Math.round((elapsed / duration) * 100));
-      preloaderCount.textContent = String(pct);
-      if (pct < 100) {
-        requestAnimationFrame(tick);
-      } else {
-        finishPreloader();
-      }
+    const closeIntro = () => {
+      if (closed) return;
+      closed = true;
+      preloader.classList.add('is-done');
+      document.body.classList.remove('no-scroll');
+      setTimeout(() => preloader.classList.add('is-removed'), 900);
     };
-    requestAnimationFrame(tick);
 
-    function finishPreloader() {
-      setTimeout(() => {
-        preloader.classList.add('is-done');
-        document.body.classList.remove('no-scroll');
-        setTimeout(() => preloader.classList.add('is-removed'), 900);
-      }, 250);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced || !window.CCIntro) {
+      closeIntro();
+    } else {
+      introHandle = window.CCIntro.start({
+        canvas: document.getElementById('introCanvas'),
+        onProgress: (p) => { if (preloaderCount) preloaderCount.textContent = String(Math.round(p * 100)); },
+        onImpact: () => preloader.classList.add('is-flash'),
+        onDone: closeIntro,
+      });
+      if (introSkip) introSkip.addEventListener('click', () => {
+        preloader.classList.add('is-flash');
+        introHandle && introHandle.skip();
+      });
     }
   }
 

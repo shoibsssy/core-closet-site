@@ -12,16 +12,17 @@
 </head>
 <body>
 
-<!-- ============ Preloader ============ -->
+<!-- ============ Intro: spinning back kick ============ -->
 <div class="preloader" id="preloader" aria-hidden="true">
+  <canvas class="preloader__canvas" id="introCanvas"></canvas>
+  <img src="assets/img/logo-mark.png" alt="" class="preloader__logo">
+  <div class="preloader__meta"><span>Core Closet</span><span>Spinning back kick &mdash; 01</span></div>
   <div class="preloader__count" id="preloaderCount">0</div>
-  <div class="preloader__mark">
-    <img src="assets/img/logo-mark.png" alt="" class="preloader__logo" id="preloaderLogo">
-    <div class="preloader__drip"></div>
-  </div>
-  <div class="preloader__panel preloader__panel--top"></div>
-  <div class="preloader__panel preloader__panel--bottom"></div>
+  <button class="preloader__skip" id="introSkip" type="button">Skip intro</button>
+  <div class="preloader__flash" id="introFlash"></div>
 </div>
+
+<a class="skip-link" href="#main">Skip to content</a>
 
 <!-- ============ Utility topbar ============ -->
 <div class="topbar" aria-hidden="true">
@@ -42,7 +43,7 @@
     <nav class="main-nav" id="mainNav">
       <a href="#" class="is-active">Home</a>
       <a href="#shop">Shop</a>
-      <a href="#heroSlider">Collections</a>
+      <a href="#lineup">Lineup</a>
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -69,7 +70,7 @@
   </div>
 </header>
 
-<main>
+<main id="main">
   <!-- ============ Hero slider ============ -->
   <section class="hero-slider" id="heroSlider">
     <div class="hero-slider__track">
@@ -232,6 +233,24 @@
     </div>
   </section>
 
+  <!-- ============ Lineup (ruler timeline) ============ -->
+  <section class="lineup" id="lineup">
+    <div class="container">
+      <div class="section-head reveal-up">
+        <h2><span class="star">★</span> The Lineup <span class="star">★</span></h2>
+        <a href="#shop" class="view-all">Shop all <span class="arrow">→</span></a>
+      </div>
+    </div>
+    <div class="lineup__ruler" aria-hidden="true"></div>
+    <div class="lineup__track">
+      <article class="lineup__card reveal-up"><span class="lineup__no">01</span><h3>Sumo Oni</h3><p>Rashguard set</p><strong>₹3,799</strong></article>
+      <article class="lineup__card reveal-up"><span class="lineup__no">02</span><h3>333 Venom</h3><p>Fight set</p><strong>₹3,599</strong></article>
+      <article class="lineup__card reveal-up"><span class="lineup__no">03</span><h3>Demon Crossbones</h3><p>Fight set</p><strong>₹3,499</strong></article>
+      <article class="lineup__card reveal-up"><span class="lineup__no">04</span><h3>Fear God</h3><p>Snakeskin set</p><strong>₹3,899</strong></article>
+      <article class="lineup__card lineup__card--collab reveal-up"><span class="lineup__no">×</span><h3>Hello Kitty</h3><p>Limited collab</p><strong>Early access</strong></article>
+    </div>
+  </section>
+
   <!-- ============ Collab spotlight ============ -->
   <section class="collab">
     <div class="container collab__inner">
@@ -268,6 +287,22 @@
         <a href="#shop" class="btn btn--gold">Explore Collections <span class="arrow">→</span></a>
       </div>
     </div>
+  </section>
+
+  <!-- ============ Mosaic ============ -->
+  <section class="mosaic" aria-label="Gallery">
+    <figure class="mosaic__tile mosaic__tile--tall"><img src="assets/img/fighter-sumo-oni.jpg" alt="" loading="lazy"><figcaption>Sumo Oni</figcaption></figure>
+    <figure class="mosaic__tile"><img src="assets/img/fighter-333-venom.jpg" alt="" loading="lazy"><figcaption>333 Venom</figcaption></figure>
+    <figure class="mosaic__tile mosaic__tile--wide"><img src="assets/img/collab-hello-kitty.jpg" alt="" loading="lazy"><figcaption>Fight Cute</figcaption></figure>
+    <figure class="mosaic__tile"><img src="assets/img/fighter-feargod-snakeskin.jpg" alt="" loading="lazy"><figcaption>Fear God</figcaption></figure>
+    <figure class="mosaic__tile mosaic__tile--wide"><img src="assets/img/fighter-demon-crossbones.jpg" alt="" loading="lazy"><figcaption>Crossbones</figcaption></figure>
+  </section>
+
+  <!-- ============ Closing band ============ -->
+  <section class="closer">
+    <p class="closer__eyebrow reveal-up">Next drop</p>
+    <h2 class="reveal-up">Gear up before you<br>step through the ropes.</h2>
+    <a href="#shop" class="btn btn--gold reveal-up">Shop the sets <span class="arrow">→</span></a>
   </section>
 
   <!-- ============ Social strip ============ -->
@@ -336,6 +371,7 @@
   </div>
 </footer>
 
+<script src="js/intro.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
