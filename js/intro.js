@@ -1,4 +1,4 @@
-// Core Closet intro: four still knockout silhouettes, centred, crossfading on a black backdrop.
+// Core Closet intro: four still knockout silhouettes, centred, crossfading on a black backdrop, filling with colour as the count reaches 100.
 // Silhouettes are baked from real fight photos into assets/img/ko/*.png (alpha only).
 // API: window.CCIntro.start({ canvas, onProgress, onImpact, onDone, freezeAt }) -> { skip }
 (function () {
@@ -18,41 +18,42 @@
 
   const rgba = (c, a) => 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')';
 
-  // Pre-render one silhouette: coloured rim + glow underneath, near-black fill on top.
-  function bake(img, color) {
-    const w = img.naturalWidth, h = img.naturalHeight, pad = 60;
-    const c = document.createElement('canvas');
-    c.width = w + pad * 2; c.height = h + pad * 2;
-    const x = c.getContext('2d');
+  // Pre-render one silhouette in two layers: a defined base (crisp white rim, charcoal body)
+  // and a theme-colour fill layer that is revealed bottom-up as the loader counts to 100.
+  function bake(img) {
+    const w = img.naturalWidth, h = img.naturalHeight, pad = 40;
+    const cw = w + pad * 2, ch = h + pad * 2;
+    const mk = () => { const c = document.createElement('canvas'); c.width = cw; c.height = ch; return c; };
 
-    // coloured copy of the silhouette
-    const tint = document.createElement('canvas');
-    tint.width = w; tint.height = h;
-    const tx = tint.getContext('2d');
-    tx.drawImage(img, 0, 0);
-    tx.globalCompositeOperation = 'source-in';
-    const hi = color;
-    tx.fillStyle = rgba(hi, 1); tx.fillRect(0, 0, w, h);
+    // solid single-colour copy of the silhouette
+    const solid = (fill) => {
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const x = c.getContext('2d');
+      x.drawImage(img, 0, 0);
+      x.globalCompositeOperation = 'source-in';
+      x.fillStyle = fill; x.fillRect(0, 0, w, h);
+      return c;
+    };
 
-    // glow
-    x.save();
-    x.shadowColor = rgba(color, 0.55); x.shadowBlur = 24;
-    x.drawImage(tint, pad, pad);
-    x.restore();
-    // rim: stamp the tint around the silhouette, then cover the inside with the dark fill
-    const r = 2.4;
-    for (let i = 0; i < 16; i++) {
-      const a = (i / 16) * Math.PI * 2;
-      x.drawImage(tint, pad + Math.cos(a) * r, pad + Math.sin(a) * r);
+    // base: soft glow, crisp white rim, charcoal body
+    const base = mk(), bx = base.getContext('2d');
+    const white = solid('#ffffff');
+    bx.save(); bx.shadowColor = 'rgba(227,30,36,.55)'; bx.shadowBlur = 22; bx.drawImage(white, pad, pad); bx.restore();
+    const r = 3.4;
+    for (let i = 0; i < 20; i++) {
+      const a = (i / 20) * Math.PI * 2;
+      bx.drawImage(white, pad + Math.cos(a) * r, pad + Math.sin(a) * r);
     }
-    const dark = document.createElement('canvas');
-    dark.width = w; dark.height = h;
-    const dx = dark.getContext('2d');
-    dx.drawImage(img, 0, 0);
-    dx.globalCompositeOperation = 'source-in';
-    dx.fillStyle = '#040102'; dx.fillRect(0, 0, w, h);
-    x.drawImage(dark, pad, pad);
-    return { canvas: c, w: w, h: h, pad: pad };
+    bx.drawImage(solid('#1c1c1c'), pad, pad);
+
+    // fill layer: red at the feet to gold at the head, clipped to the silhouette
+    const fill = mk(), fx = fill.getContext('2d');
+    fx.drawImage(img, pad, pad);
+    fx.globalCompositeOperation = 'source-in';
+    const g = fx.createLinearGradient(0, ch - pad, 0, pad);
+    g.addColorStop(0, '#e31e24'); g.addColorStop(0.55, '#ff5a1f'); g.addColorStop(1, '#f5c518');
+    fx.fillStyle = g; fx.fillRect(0, 0, cw, ch);
+    return { base: base, fill: fill, w: w, h: h, pad: pad, cw: cw, ch: ch };
   }
 
   function start(opts) {
@@ -92,12 +93,24 @@
     const baked = [];
 
     // Calm presentation: black background, one centred silhouette, soft crossfade between frames.
-    function drawSlide(b, alpha) {
-      const sc = (H * 0.56 / b.h);
-      const iw = b.w * sc, ih = b.h * sc;
+    // `level` (0..1) is how far the colour fill has risen, tied to the loader percentage.
+    function drawSlide(b, alpha, level) {
+      const sc = (H * 0.6 / b.h);
+      const iw = b.cw * sc, ih = b.ch * sc;
       const ix = (W - iw) / 2, iy = (H - ih) / 2 - H * 0.02;
       ctx.globalAlpha = alpha;
-      ctx.drawImage(b.canvas, ix - b.pad * sc, iy - b.pad * sc, b.canvas.width * sc, b.canvas.height * sc);
+      ctx.drawImage(b.base, ix, iy, iw, ih);
+      if (level > 0) {
+        // reveal the fill from the bottom of the figure upward
+        const top = b.pad + b.h * (1 - level);
+        ctx.drawImage(b.fill, 0, top, b.cw, b.ch - top, ix, iy + top * sc, iw, (b.ch - top) * sc);
+        // bright edge at the fill front
+        if (level < 1) {
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.drawImage(b.fill, 0, top, b.cw, 3, ix, iy + top * sc, iw, 3 * sc);
+          ctx.globalCompositeOperation = 'source-over';
+        }
+      }
       ctx.globalAlpha = 1;
     }
 
@@ -108,9 +121,10 @@
       ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
       if (!baked[i]) return;
+      const level = clamp(t / (T_HIT * 0.94));
       const FADE = 220;
-      if (local < FADE && i > 0 && baked[i - 1]) drawSlide(baked[i - 1], 1 - local / FADE);
-      drawSlide(baked[i], clamp(local / FADE));
+      if (local < FADE && i > 0 && baked[i - 1]) drawSlide(baked[i - 1], 1 - local / FADE, level);
+      drawSlide(baked[i], clamp(local / FADE), level);
       ctx.fillStyle = 'rgba(255,255,255,.45)';
       ctx.font = '400 ' + Math.round(Math.max(11, W * 0.009)) + 'px "Space Mono", ui-monospace, monospace';
       ctx.fillText('FRAME ' + s.label + ' / 0' + SLIDES.length, 34, H - 70);
@@ -126,7 +140,7 @@
     };
     SLIDES.forEach((s, idx) => {
       const img = new Image();
-      img.onload = () => { baked[idx] = bake(img, s.color); if (--pending === 0) ready(); };
+      img.onload = () => { baked[idx] = bake(img); if (--pending === 0) ready(); };
       img.onerror = () => { if (!finished) { skipped = true; finish(); } };
       img.src = s.src;
     });

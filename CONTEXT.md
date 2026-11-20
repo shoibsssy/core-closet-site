@@ -27,9 +27,9 @@ A rapid loading sequence of **four real knockout stills shown as silhouettes**, 
 1. McGregor left on Aldo (red)  2. Silva front kick on Belfort (gold)  3. Edwards head kick (white)  4. Holloway exchange (red)
 
 How it is built:
-- Silhouettes are baked from supplied photos into `assets/img/ko/ko1-4.png` (alpha only, edges smoothed, faded where the crop cuts figures off). `intro.js` tints a thin rim and soft glow around each one in a theme colour (site red, gold, white), and fills it near-black on pure black.
+- Silhouettes are baked from supplied photos into `assets/img/ko/ko1-4.png` (alpha only, edges smoothed, faded where the crop cuts figures off). `intro.js` draws each as a crisp white rim with a charcoal body on pure black, and a red-to-gold (site theme) colour fill rises from the feet to the head as the counter goes 0 to 100, so the last frame ends fully filled.
 - Baking pipeline (not in the repo): `rembg` (isnet-general-use) mask, median filter, fill small holes, 2x upscale, blur and threshold. A fifth photo (tight clinch crop) cut out as a blob and was dropped.
-- `SLIDES` in `intro.js` holds `dur`, `src`, theme rim colour and label.
+- `SLIDES` in `intro.js` holds `dur`, `src`, label (colours are fixed in `bake()`).
 - `start({ canvas, onProgress, onImpact, onDone, freezeAt })` returns `{ skip }`. Images load first; if they fail or take over 6 s the intro is skipped.
 - To add or swap a frame: cut out a new photo the same way, save as `assets/img/ko/koN.png`, add a `SLIDES` entry.
 - The original photos live only in local `source-photos/` (gitignored, agency photos).
