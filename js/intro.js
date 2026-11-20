@@ -1,4 +1,4 @@
-// Core Closet — intro: a golden-haired Super Saiyan style fighter throws a spinning back kick at the viewer.
+// Core Closet — intro: a silhouetted Super Saiyan style fighter throws a spinning back kick at the viewer.
 // A small 3D skeleton is posed with keyframes, spun around its vertical axis,
 // projected with a real perspective camera and drawn on <canvas>. The camera
 // dives at the kicking foot until it fills the screen, then we cut to the site.
@@ -16,31 +16,31 @@
 
   const POSES = {
     guard: {
-      pelvis: [0, 1, 0], chest: [0, 1.45, 0.05], head: [0, 1.74, 0.08],
-      shL: [-0.2, 1.53, 0], shR: [0.2, 1.53, 0],
-      elL: [-0.3, 1.32, 0.22], elR: [0.26, 1.36, 0.2],
-      haL: [-0.14, 1.55, 0.42], haR: [0.1, 1.6, 0.44],
-      hiL: [-0.1, 1, 0], hiR: [0.1, 1, 0],
-      knL: [-0.16, 0.52, 0.2], knR: [0.18, 0.52, -0.08],
-      foL: [-0.2, 0.05, 0.38], foR: [0.24, 0.05, -0.34],
+      pelvis: [0, 0.95, 0], chest: [0, 1.42, 0.05], head: [0, 1.72, 0.1],
+      shL: [-0.2, 1.5, 0], shR: [0.2, 1.5, 0],
+      elL: [-0.32, 1.28, 0.3], elR: [0.3, 1.3, 0.24],
+      haL: [-0.16, 1.56, 0.5], haR: [0.14, 1.56, 0.42],
+      hiL: [-0.12, 0.95, 0], hiR: [0.12, 0.95, 0],
+      knL: [-0.3, 0.5, 0.3], knR: [0.32, 0.5, -0.22],
+      foL: [-0.32, 0.05, 0.58], foR: [0.38, 0.05, -0.5],
     },
     chamber: {
-      pelvis: [0, 1, 0], chest: [0, 1.42, 0.12], head: [0, 1.7, 0.2],
-      shL: [-0.2, 1.5, 0.05], shR: [0.2, 1.5, 0.05],
-      elL: [-0.25, 1.3, 0.2], elR: [0.22, 1.3, 0.2],
-      haL: [-0.1, 1.45, 0.35], haR: [0.08, 1.48, 0.36],
-      hiL: [-0.1, 1, 0], hiR: [0.1, 1, 0],
-      knL: [-0.1, 0.52, 0.08], knR: [0.14, 0.95, 0.3],
-      foL: [-0.1, 0.05, 0.1], foR: [0.1, 0.55, -0.05],
+      pelvis: [0, 0.95, 0], chest: [0, 1.4, 0.14], head: [0, 1.7, 0.22],
+      shL: [-0.2, 1.48, 0.06], shR: [0.2, 1.48, 0.06],
+      elL: [-0.3, 1.28, 0.3], elR: [0.3, 1.26, 0.2],
+      haL: [-0.14, 1.5, 0.5], haR: [0.24, 1.46, 0.36],
+      hiL: [-0.12, 0.95, 0], hiR: [0.12, 0.95, 0],
+      knL: [-0.14, 0.5, 0.1], knR: [0.2, 0.92, 0.32],
+      foL: [-0.14, 0.05, 0.12], foR: [0.12, 0.5, -0.1],
     },
     strike: {
-      pelvis: [0, 1, 0], chest: [0, 1.22, 0.5], head: [0.05, 1.28, 0.74],
-      shL: [-0.2, 1.28, 0.4], shR: [0.2, 1.28, 0.4],
-      elL: [-0.3, 1.15, 0.6], elR: [0.3, 1.15, 0.6],
-      haL: [-0.18, 1.25, 0.8], haR: [0.18, 1.25, 0.8],
-      hiL: [-0.1, 1, 0], hiR: [0.1, 1, 0],
-      knL: [-0.1, 0.52, 0.1], knR: [0.1, 1.2, -0.55],
-      foL: [-0.1, 0.05, 0.1], foR: [0.1, 1.48, -1.2],
+      pelvis: [0, 1, 0], chest: [0, 1.3, 0.42], head: [0, 1.4, 0.74],
+      shL: [-0.2, 1.34, 0.4], shR: [0.2, 1.34, 0.4],
+      elL: [-0.42, 1.22, 0.7], elR: [0.42, 1.34, 0.12],
+      haL: [-0.34, 1.12, 1.0], haR: [0.6, 1.4, -0.18],
+      hiL: [-0.12, 1, 0], hiR: [0.12, 1, 0],
+      knL: [-0.12, 0.52, 0.05], knR: [0.1, 1.22, -0.5],
+      foL: [-0.12, 0.05, 0.05], foR: [0.1, 1.42, -1.02],
     },
   };
 
@@ -142,13 +142,16 @@
       let ok = true;
       J.forEach((j) => { P[j] = proj(toWorld(pose[j])); if (!P[j]) ok = false; });
 
-      // ---- background
+      // ---- background: blazing gold blast so the black silhouette pops
       ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
-      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.7);
-      g.addColorStop(0, 'rgba(227,30,36,' + (0.28 + dive * 0.3) + ')');
-      g.addColorStop(0.6, 'rgba(60,0,2,.25)');
-      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = '#1a0500'; ctx.fillRect(0, 0, W, H);
+      const bgr = Math.max(W, H) * (0.85 + dive * 0.5);
+      const g = ctx.createRadialGradient(cx, cy * 0.95, 0, cx, cy * 0.95, bgr);
+      g.addColorStop(0, 'rgba(255,248,200,1)');
+      g.addColorStop(0.22, 'rgba(255,214,70,1)');
+      g.addColorStop(0.5, 'rgba(240,120,10,.95)');
+      g.addColorStop(0.8, 'rgba(120,20,0,.9)');
+      g.addColorStop(1, 'rgba(20,0,0,1)');
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
       // floor glow under the fighter
@@ -170,7 +173,7 @@
       if (dive > 0.05) {
         ctx.save();
         ctx.translate(cx, cy);
-        ctx.strokeStyle = 'rgba(255,255,255,' + (dive * 0.5) + ')';
+        ctx.strokeStyle = 'rgba(90,20,0,' + (dive * 0.55) + ')';
         const R = Math.hypot(W, H);
         for (let i = 0; i < 46; i++) {
           const a = (i / 46) * Math.PI * 2 + i * 1.7;
@@ -256,133 +259,141 @@
         ctx.restore();
       }
 
-      // ---- body parts, painter-sorted far -> near
-      const rgb = (c, z) => {
-        const v = lerp(0.5, 1, clamp((z + 1.3) / 2.6));
-        return 'rgb(' + Math.round(c[0] * v) + ',' + Math.round(c[1] * v) + ',' + Math.round(c[2] * v) + ')';
-      };
-      const SKIN = [243, 192, 152], GI = [247, 122, 18], BLUE = [34, 64, 168], GOLD = [255, 214, 40];
+      // ---- silhouette fighter: tapered black shapes with gold rim light
       const mid = (a, b, f) => ({
         x: lerp(a.x, b.x, f), y: lerp(a.y, b.y, f), k: lerp(a.k, b.k, f), z: lerp(a.z, b.z, f), d: lerp(a.d, b.d, f),
       });
+      const ext = (m, a, f) => ({ x: m.x + (a.x - m.x) * f, y: m.y + (a.y - m.y) * f, k: a.k, z: a.z, d: a.d });
       const parts = [];
-      const limb = (a, b, w, color) => parts.push({ type: 'limb', a, b, w, color, z: (a.z + b.z) / 2 });
-      const ball = (a, r, color, ring, tall, dz) => parts.push({ type: 'ball', a, r, color, ring, tall: tall || 1, z: a.z + (dz || 0) });
+      // tapered capsule between two projected points, radii in body units
+      const cap = (a, ra, b, rb, z) => parts.push({ z: z === undefined ? (a.z + b.z) / 2 : z, draw(ex) {
+        const r1 = ra * a.k + ex, r2 = rb * b.k + ex;
+        const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
+        const nx = -dy / len, ny = dx / len;
+        ctx.beginPath();
+        ctx.moveTo(a.x + nx * r1, a.y + ny * r1); ctx.lineTo(b.x + nx * r2, b.y + ny * r2);
+        ctx.lineTo(b.x - nx * r2, b.y - ny * r2); ctx.lineTo(a.x - nx * r1, a.y - ny * r1); ctx.closePath(); ctx.fill();
+        ctx.beginPath(); ctx.arc(a.x, a.y, r1, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(b.x, b.y, r2, 0, Math.PI * 2); ctx.fill();
+      } });
+      const blob = (a, rx, ry, rot, z) => parts.push({ z: z === undefined ? a.z : z, draw(ex) {
+        ctx.beginPath(); ctx.ellipse(a.x, a.y, rx * a.k + ex, ry * a.k + ex, rot || 0, 0, Math.PI * 2); ctx.fill();
+      } });
+      const poly = (pts, z, grow) => parts.push({ z, draw(ex) {
+        ctx.beginPath(); pts.forEach((q, i) => (i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y))); ctx.closePath();
+        ctx.fill(); ctx.lineWidth = (grow || 0) + ex * 2; ctx.stroke();
+      } });
 
-      // legs: orange gi trousers, blue boots with gold trim
+      // broad anime shoulders and a V-shaped torso
+      const M = mid(P.shL, P.shR, 0.5);
+      const SL = ext(M, P.shL, 1.4), SR = ext(M, P.shR, 1.4);
+      const WL = ext(P.pelvis, P.hiL, 1.25), WR = ext(P.pelvis, P.hiR, 1.25);
+      poly([SL, SR, WR, WL], P.chest.z, P.chest.k * 0.05);
+      blob(mid(P.pelvis, P.chest, 0.78), 0.2, 0.15, 0, P.chest.z);
+      blob(P.pelvis, 0.19, 0.12, 0, P.pelvis.z);
+      cap(P.chest, 0.08, P.head, 0.065, P.head.z - 0.02);   // neck
+
+      // legs: thick gi trousers tapering into boots
       [['hiL', 'knL', 'foL'], ['hiR', 'knR', 'foR']].forEach(([hi, kn, fo]) => {
-        limb(P[hi], P[kn], 0.19, rgb(GI, P[kn].z));
-        limb(P[kn], P[fo], 0.15, rgb(GI, P[fo].z));
-        limb(mid(P[kn], P[fo], 0.55), P[fo], 0.17, rgb(BLUE, P[fo].z));
-        ball(P[fo], 0.115, rgb(BLUE, P[fo].z), rgb(GOLD, P[fo].z), fo === 'foR' && p > 1 ? 1.55 : 1.1);
-      });
-      // torso: orange gi, blue undershirt collar, blue sash
-      limb(P.pelvis, P.chest, 0.34, rgb(GI, P.chest.z));
-      limb(P.chest, mid(P.chest, P.head, 0.4), 0.22, rgb(BLUE, P.chest.z));
-      limb(P.pelvis, mid(P.pelvis, P.chest, 0.22), 0.38, rgb(BLUE, P.pelvis.z));
-      limb(P.chest, P.head, 0.1, rgb(SKIN, P.head.z));
-
-      // arms: bare arms, blue wristbands, skin fists
-      [['shL', 'elL', 'haL'], ['shR', 'elR', 'haR']].forEach(([sh, el, ha]) => {
-        limb(P[sh], P[el], 0.1, rgb(SKIN, P[el].z));
-        limb(P[el], P[ha], 0.09, rgb(SKIN, P[ha].z));
-        limb(mid(P[el], P[ha], 0.55), mid(P[el], P[ha], 0.9), 0.115, rgb(BLUE, P[ha].z));
-        ball(P[ha], 0.085, rgb(SKIN, P[ha].z), null);
+        cap(P[hi], 0.135, P[kn], 0.1);
+        cap(P[kn], 0.1, P[fo], 0.075);
+        const cuff = mid(P[kn], P[fo], 0.62);
+        cap(cuff, 0.1, P[fo], 0.09, P[fo].z + 0.001);
+        const kicking = fo === 'foR' && p > 1;
+        if (kicking) blob(P[fo], 0.1, 0.17, 0, P[fo].z + 0.002);
+        else {
+          const toe = proj(toWorld([pose[fo][0], pose[fo][1] - 0.01, pose[fo][2] + (fo === 'foR' ? -0.2 : 0.2)]));
+          if (toe) cap(P[fo], 0.085, toe, 0.06, P[fo].z + 0.002);
+        }
       });
 
-      // head: skin, golden spiky hair, sharp saiyan face
-      const HW = toWorld(pose.head);
+      // arms: bulky shoulders, tapered forearms, wristbands, fists
+      [[SL, 'elL', 'haL'], [SR, 'elR', 'haR']].forEach(([sh, el, ha]) => {
+        cap(sh, 0.085, P[el], 0.07);
+        cap(P[el], 0.07, P[ha], 0.06);
+        cap(mid(P[el], P[ha], 0.58), 0.08, mid(P[el], P[ha], 0.82), 0.082, P[ha].z + 0.001);
+        blob(P[ha], 0.085, 0.085, 0, P[ha].z + 0.002);
+      });
+
+      // sash tails fluttering off the waist
+      const wob = Math.sin(t / 90);
+      [[0.1, 0.4], [0.14, 0.2]].forEach(([sx, len], i) => {
+        const a = proj(toWorld([sx * (i ? 1 : -1) * 0.4, 0.99, -0.12]));
+        const m = proj(toWorld([sx * (i ? 1 : -1), 0.8 - len * 0.2, -0.3 - 0.05 * wob]));
+        const e = proj(toWorld([sx * (i ? 1.8 : -1.8), 0.55 - len * 0.2, -0.45 - 0.1 * wob * (i ? -1 : 1)]));
+        if (a && m && e) { cap(a, 0.05, m, 0.04, P.pelvis.z - 0.05); cap(m, 0.04, e, 0.02, P.pelvis.z - 0.05); }
+      });
+
+      // head with iconic spiky hair
       const faceDir = toWorld([0, 0, 1]);
       const fz = faceDir[2];
-      const HR = 0.15;
-      ball(P.head, HR, rgb(SKIN, P.head.z), null);
-      ball({ x: P.head.x, y: P.head.y - HR * 0.3 * P.head.k, k: P.head.k, z: P.head.z, d: P.head.d }, HR * 1.06, rgb(GOLD, P.head.z), null, 1, -fz * 0.12 - 0.002);
-      // spikes: [direction on skull, tip offset] in body space
+      const HR = 0.14;
+      blob(P.head, HR, HR * 1.12, 0, P.head.z);
+      cap(proj(toWorld([pose.head[0], pose.head[1] - 0.08, pose.head[2] + 0.03])) || P.head, 0.09, proj(toWorld([pose.head[0], pose.head[1] - 0.15, pose.head[2] + 0.06])) || P.head, 0.06, P.head.z); // jaw
       const SPIKES = [
-        [[0, 1, 0], [0, 0.36, 0], 0.075], [[-0.5, 0.85, -0.1], [-0.2, 0.32, -0.04], 0.07], [[0.5, 0.85, -0.1], [0.2, 0.32, -0.04], 0.07],
-        [[-0.9, 0.4, 0], [-0.32, 0.16, -0.05], 0.065], [[0.9, 0.4, 0], [0.32, 0.16, -0.05], 0.065],
-        [[-0.4, 0.6, -0.7], [-0.12, 0.12, -0.3], 0.07], [[0.4, 0.6, -0.7], [0.12, 0.12, -0.3], 0.07],
-        [[0, 0.5, -0.85], [0, 0.06, -0.34], 0.08],
-        [[0, 0.62, 0.78], [0.02, -0.04, 0.15], 0.045], [[-0.38, 0.62, 0.68], [-0.1, -0.05, 0.13], 0.04], [[0.38, 0.62, 0.68], [0.1, -0.05, 0.13], 0.04],
+        [[0, 1, 0], [0.01, 0.5, 0], 0.095], [[-0.5, 0.85, -0.1], [-0.3, 0.42, -0.05], 0.09], [[0.5, 0.85, -0.1], [0.3, 0.42, -0.05], 0.09],
+        [[-0.9, 0.45, 0], [-0.46, 0.2, -0.05], 0.085], [[0.9, 0.45, 0], [0.46, 0.2, -0.05], 0.085],
+        [[-0.4, 0.6, -0.7], [-0.18, 0.2, -0.42], 0.09], [[0.4, 0.6, -0.7], [0.18, 0.2, -0.42], 0.09],
+        [[0, 0.5, -0.85], [0, 0.12, -0.5], 0.1],
+        [[0, 0.62, 0.78], [0.03, -0.04, 0.2], 0.06], [[-0.38, 0.62, 0.68], [-0.14, -0.08, 0.16], 0.055], [[0.38, 0.62, 0.68], [0.14, -0.08, 0.16], 0.055],
       ];
       SPIKES.forEach(([d, off, w]) => {
-        const bb = proj(toWorld([pose.head[0] + d[0] * HR * 0.9, pose.head[1] + d[1] * HR * 0.9 - 0.02, pose.head[2] + d[2] * HR * 0.9]));
+        const bb = proj(toWorld([pose.head[0] + d[0] * HR * 0.85, pose.head[1] + d[1] * HR * 0.85 - 0.02, pose.head[2] + d[2] * HR * 0.85]));
         const tt = proj(toWorld([pose.head[0] + d[0] * HR + off[0], pose.head[1] + d[1] * HR + off[1], pose.head[2] + d[2] * HR + off[2]]));
-        if (bb && tt) parts.push({ type: 'spike', a: bb, b: tt, w, z: bb.z + 0.004 });
+        if (!bb || !tt) return;
+        const dx = tt.x - bb.x, dy = tt.y - bb.y, len = Math.hypot(dx, dy) || 1;
+        const nx = -dy / len, ny = dx / len, hw = w * ((bb.k + tt.k) / 2);
+        const c1 = { x: bb.x + dx * 0.55 + nx * hw * 0.55, y: bb.y + dy * 0.55 + ny * hw * 0.55 };
+        const c2 = { x: bb.x + dx * 0.5 - nx * hw * 0.5, y: bb.y + dy * 0.5 - ny * hw * 0.5 };
+        parts.push({ z: bb.z + 0.004, draw(ex) {
+          const e = ex * 0.9;
+          ctx.beginPath();
+          ctx.moveTo(bb.x + nx * (hw + e), bb.y + ny * (hw + e));
+          ctx.quadraticCurveTo(c1.x + nx * e, c1.y + ny * e, tt.x + dx / len * e * 1.4, tt.y + dy / len * e * 1.4);
+          ctx.quadraticCurveTo(c2.x - nx * e, c2.y - ny * e, bb.x - nx * (hw + e), bb.y - ny * (hw + e));
+          ctx.closePath(); ctx.fill();
+        } });
       });
-      // face (only when turned toward the camera)
-      if (fz > 0.12) {
-        const hx = pose.head[0], hy = pose.head[1], hz = pose.head[2];
-        const fp = (x, y, z) => proj(toWorld([hx + x, hy + y, hz + z]));
-        const face = {
-          eL: fp(-0.05, 0.012, 0.112), eR: fp(0.05, 0.012, 0.112),
-          bL1: fp(-0.085, 0.048, 0.1), bL2: fp(-0.02, 0.026, 0.115),
-          bR1: fp(0.085, 0.048, 0.1), bR2: fp(0.02, 0.026, 0.115),
-          m1: fp(-0.03, -0.055, 0.11), m2: fp(0.03, -0.055, 0.11),
-        };
-        if (face.eL && face.eR) parts.push({ type: 'face', f: face, k: P.head.k, a: P.head, a2: face.eL, z: P.head.z + 0.2, vis: clamp(fz * 1.6) });
+      // glowing eyes + angry brow when turned toward the camera
+      let eyes = null;
+      if (fz > 0.15) {
+        const fp = (x, y, z) => proj(toWorld([pose.head[0] + x, pose.head[1] + y, pose.head[2] + z]));
+        const eL = fp(-0.055, 0.0, 0.125), eR = fp(0.055, 0.0, 0.125);
+        if (eL && eR) eyes = { eL, eR, u: P.head.k * 0.016, vis: clamp(fz * 1.8) };
       }
       parts.sort((a, b) => a.z - b.z);
 
       ctx.save();
-      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-      ctx.shadowColor = 'rgba(255,200,40,.5)';
-      ctx.shadowBlur = 14;
+      ctx.shadowColor = 'rgba(255,170,0,.75)';
+      ctx.shadowBlur = 20;
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      const rim = Math.max(1.5, P.chest.k * 0.012);
       parts.forEach((q) => {
-        if (q.type === 'limb') {
-          ctx.strokeStyle = q.color;
-          ctx.lineWidth = q.w * ((q.a.k + q.b.k) / 2);
-          ctx.beginPath(); ctx.moveTo(q.a.x, q.a.y); ctx.lineTo(q.b.x, q.b.y); ctx.stroke();
-        } else if (q.type === 'ball') {
-          const r = q.r * q.a.k;
-          ctx.fillStyle = q.color;
-          ctx.beginPath(); ctx.ellipse(q.a.x, q.a.y, r, r * q.tall, 0, 0, Math.PI * 2); ctx.fill();
-          if (q.ring) { ctx.lineWidth = r * 0.22; ctx.strokeStyle = q.ring; ctx.stroke(); }
-        } else if (q.type === 'spike') {
-          const dx = q.b.x - q.a.x, dy = q.b.y - q.a.y, len = Math.hypot(dx, dy) || 1;
-          const nx = -dy / len, ny = dx / len, hw = q.w * ((q.a.k + q.b.k) / 2);
-          const sg = ctx.createLinearGradient(q.a.x, q.a.y, q.b.x, q.b.y);
-          sg.addColorStop(0, '#e8a200'); sg.addColorStop(0.55, '#ffd21f'); sg.addColorStop(1, '#fff6a8');
-          ctx.fillStyle = sg;
-          ctx.beginPath();
-          ctx.moveTo(q.a.x + nx * hw, q.a.y + ny * hw);
-          ctx.quadraticCurveTo(q.a.x + dx * 0.6 + nx * hw * 0.55, q.a.y + dy * 0.6 + ny * hw * 0.55, q.b.x, q.b.y);
-          ctx.quadraticCurveTo(q.a.x + dx * 0.55 - nx * hw * 0.5, q.a.y + dy * 0.55 - ny * hw * 0.5, q.a.x - nx * hw, q.a.y - ny * hw);
-          ctx.closePath(); ctx.fill();
-          ctx.lineWidth = Math.max(1, hw * 0.12); ctx.strokeStyle = 'rgba(150,90,0,.55)'; ctx.stroke();
-        } else if (q.type === 'face') {
-          const f = q.f, u = q.k * 0.016;
-          ctx.shadowBlur = 0;
-          ctx.globalAlpha = q.vis;
-          // eyes: sharp, teal, with dark outline
-          [[f.eL, -1], [f.eR, 1]].forEach(([e, sd]) => {
-            ctx.fillStyle = '#fff';
-            ctx.beginPath(); ctx.ellipse(e.x, e.y, u * 1.7, u * 1.0, sd * -0.18, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#19c5b4';
-            ctx.beginPath(); ctx.ellipse(e.x, e.y, u * 0.95, u * 0.95, 0, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#052a30';
-            ctx.beginPath(); ctx.arc(e.x, e.y, u * 0.45, 0, Math.PI * 2); ctx.fill();
-            ctx.lineWidth = u * 0.4; ctx.strokeStyle = '#1b0f00';
-            ctx.beginPath(); ctx.ellipse(e.x, e.y, u * 1.7, u * 1.0, sd * -0.18, Math.PI, Math.PI * 2); ctx.stroke();
-          });
-          // furrowed gold brows
-          ctx.strokeStyle = '#c98400'; ctx.lineWidth = u * 0.95;
-          [[f.bL1, f.bL2], [f.bR1, f.bR2]].forEach(([a, b]) => {
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-          });
-          // gritted mouth
-          ctx.strokeStyle = '#6b2a14'; ctx.lineWidth = u * 0.5;
-          ctx.beginPath(); ctx.moveTo(f.m1.x, f.m1.y); ctx.lineTo(f.m2.x, f.m2.y); ctx.stroke();
-          ctx.globalAlpha = 1;
-        }
+        ctx.fillStyle = 'rgba(255,230,120,.95)'; ctx.strokeStyle = 'rgba(255,230,120,.95)';
+        q.draw(rim);
       });
+      ctx.shadowBlur = 0;
+      parts.forEach((q) => {
+        ctx.fillStyle = '#050200'; ctx.strokeStyle = '#050200';
+        q.draw(0);
+      });
+      if (eyes) {
+        const { eL, eR, u, vis } = eyes;
+        ctx.globalAlpha = vis; ctx.fillStyle = '#fff'; ctx.shadowColor = '#fff'; ctx.shadowBlur = 12;
+        [[eL, 1], [eR, -1]].forEach(([e, sd]) => {
+          ctx.beginPath();
+          ctx.moveTo(e.x - u * 2.2, e.y - u * 0.2 * sd); ctx.lineTo(e.x + u * 2.2, e.y + u * 0.9 * sd);
+          ctx.lineTo(e.x + u * 1.6, e.y + u * 1.5); ctx.lineTo(e.x - u * 2.0, e.y + u * 0.9); ctx.closePath(); ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+      }
       ctx.restore();
 
       // sole tread lines on the striking foot as it fills the frame
       if (dive > 0.35) {
         const f = P.foR, r = 0.105 * f.k * 1.55 * 0.62;
         ctx.save();
-        ctx.strokeStyle = 'rgba(0,10,40,.4)';
+        ctx.strokeStyle = 'rgba(255,215,90,.45)';
         ctx.lineWidth = Math.max(2, r * 0.05);
         for (let i = -3; i <= 3; i++) {
           ctx.beginPath();
