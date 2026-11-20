@@ -1,56 +1,70 @@
-// Core Closet intro: a rapid-fire loading sequence of still silhouette poses, each inspired by an
-// iconic anime hero stance (one-punch hero, rubber-arm pirate, ninja run, sorcerer hand sign, then a
-// beam-blast finale). Every slide is a flat black silhouette with a coloured rim and glow on a dark
-// backdrop, hard-cut with a flash and glitch slices. Drawn on <canvas>, no assets.
+// Core Closet intro: a rapid loading sequence of still silhouettes of classic MMA finishing moments
+// (head-kick KO, flying knee, straight-left KO, ground and pound, victory over a fallen opponent).
+// Each frame is two fighters drawn as anatomical silhouettes (variable-width limbs with quad, calf,
+// bicep and lat contours, gloved fists, shorts, jaw) with a coloured rim on a dark backdrop. Frames
+// hard-cut with a flash and glitch slices. Everything is drawn on <canvas>; no image assets.
 
 (function () {
   const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
   const lerp = (a, b, t) => a + (b - a) * t;
   const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-  const easeIn = (t) => t * t * t;
 
-  // Joints in metres, facing +x, y up, ground y = 0.
-  const base = (o) => Object.assign({
-    head: [0.08, 1.68], neck: [0.05, 1.55], chest: [0.03, 1.42], pelvis: [0, 0.95], shoulder: [0.05, 1.5],
-    elN: [0.1, 1.2], haN: [0.15, 0.95], elF: [0.1, 1.2], haF: [0.12, 0.95],
-    knS: [0.1, 0.5], anS: [0.08, 0.08], toS: [0.22, 0.04], knK: [-0.1, 0.5], anK: [-0.12, 0.08], toK: [0.0, 0.04],
+  // A pose is in metres, facing +x, y up, ground at y = 0, origin on the pelvis.
+  const J = ['head', 'neck', 'chest', 'pelvis', 'shoulder', 'elN', 'haN', 'elF', 'haF', 'knS', 'anS', 'toS', 'knK', 'anK', 'toK'];
+  const pose = (o) => Object.assign({
+    head: [0.04, 1.66], neck: [0.03, 1.52], chest: [0.02, 1.38], pelvis: [0, 0.95], shoulder: [0.03, 1.46],
+    elN: [0.15, 1.25], haN: [0.25, 1.45], elF: [0.1, 1.22], haF: [0.2, 1.4],
+    knS: [0.12, 0.5], anS: [0.1, 0.08], toS: [0.24, 0.04], knK: [-0.12, 0.5], anK: [-0.16, 0.08], toK: [-0.04, 0.04],
   }, o);
 
+  // ---- poses
+  const KICKER = pose({ head: [-0.3, 1.62], neck: [-0.23, 1.5], chest: [-0.17, 1.37], pelvis: [0, 0.98], shoulder: [-0.2, 1.45],
+    elN: [-0.05, 1.28], haN: [0.1, 1.46], elF: [-0.15, 1.22], haF: [0.0, 1.38],
+    knS: [0.03, 0.52], anS: [-0.02, 0.08], toS: [0.12, 0.04], knK: [0.5, 1.27], anK: [0.98, 1.6], toK: [1.12, 1.66] });
+  const KO_BACK = pose({ head: [-0.42, 1.52], neck: [-0.34, 1.43], chest: [-0.22, 1.3], pelvis: [0, 0.95], shoulder: [-0.25, 1.38],
+    elN: [-0.3, 1.62], haN: [-0.18, 1.86], elF: [-0.48, 1.3], haF: [-0.68, 1.42],
+    knS: [0.1, 0.5], anS: [0.06, 0.1], toS: [0.2, 0.06], knK: [-0.2, 0.52], anK: [-0.34, 0.12], toK: [-0.22, 0.07] });
+
+  const KNEER = pose({ pelvis: [0, 1.3], chest: [0.02, 1.72], neck: [0.02, 1.86], head: [0.04, 2.0], shoulder: [0.03, 1.8],
+    elN: [0.22, 1.85], haN: [0.4, 2.05], elF: [-0.12, 1.75], haF: [-0.02, 1.98],
+    knS: [-0.28, 0.95], anS: [-0.55, 0.7], toS: [-0.66, 0.66], knK: [0.52, 1.46], anK: [0.36, 0.95], toK: [0.5, 0.88] });
+  const KNEED = pose({ head: [0.4, 1.4], neck: [0.32, 1.38], chest: [0.2, 1.26], pelvis: [0, 0.92], shoulder: [0.26, 1.34],
+    elN: [0.42, 1.2], haN: [0.55, 1.4], elF: [0.38, 1.1], haF: [0.5, 1.28],
+    knS: [0.1, 0.5], anS: [0.06, 0.08], toS: [0.2, 0.04], knK: [-0.25, 0.5], anK: [-0.4, 0.1], toK: [-0.28, 0.05] });
+
+  const PUNCHER = pose({ head: [0.42, 1.55], neck: [0.34, 1.45], chest: [0.24, 1.32], pelvis: [0, 0.88], shoulder: [0.3, 1.42],
+    elN: [0.68, 1.46], haN: [1.1, 1.5], elF: [0.18, 1.22], haF: [0.34, 1.46],
+    knS: [0.42, 0.5], anS: [0.46, 0.08], toS: [0.62, 0.04], knK: [-0.36, 0.46], anK: [-0.72, 0.08], toK: [-0.56, 0.04] });
+
+  const MOUNT = pose({ pelvis: [0, 0.68], chest: [0.3, 1.14], neck: [0.4, 1.26], head: [0.5, 1.34], shoulder: [0.34, 1.2],
+    elN: [0.12, 1.55], haN: [0.4, 1.72], elF: [0.6, 1.0], haF: [0.74, 0.62],
+    knS: [0.4, 0.32], anS: [-0.1, 0.1], toS: [-0.24, 0.06], knK: [0.34, 0.26], anK: [-0.16, 0.12], toK: [-0.3, 0.08] });
+  const FALLEN = pose({ pelvis: [0, 0.22], chest: [0.55, 0.26], neck: [0.78, 0.26], head: [0.95, 0.24], shoulder: [0.6, 0.3],
+    elN: [0.62, 0.55], haN: [0.74, 0.8], elF: [0.5, 0.18], haF: [0.9, 0.1],
+    knS: [-0.3, 0.62], anS: [-0.68, 0.22], toS: [-0.82, 0.16], knK: [-0.15, 0.58], anK: [-0.5, 0.2], toK: [-0.64, 0.14] });
+
+  const VICTOR = pose({ head: [0.03, 1.66], neck: [0.02, 1.53], chest: [0.01, 1.4], pelvis: [0, 0.95], shoulder: [0.02, 1.48],
+    elN: [0.28, 1.78], haN: [0.44, 2.04], elF: [-0.26, 1.78], haF: [-0.42, 2.04],
+    knS: [0.18, 0.5], anS: [0.3, 0.08], toS: [0.44, 0.04], knK: [-0.18, 0.5], anK: [-0.3, 0.08], toK: [-0.16, 0.04] });
+
+  // ---- slides: each has figures [pose, originX (m), flip], accent colour, contact point for the flash
   const SLIDES = [
-    { // one-punch hero: lunging straight punch, bald head, flowing cape
-      id: 'punch', dur: 560, flip: false, color: [255, 176, 32], dx: -0.15, label: '01',
-      pose: base({ head: [0.46, 1.5], neck: [0.37, 1.4], chest: [0.26, 1.27], pelvis: [0, 0.86], shoulder: [0.33, 1.36],
-        elN: [0.72, 1.4], haN: [1.14, 1.42], elF: [0.05, 1.12], haF: [-0.12, 0.98],
-        knS: [0.5, 0.52], anS: [0.55, 0.08], toS: [0.7, 0.04], knK: [-0.4, 0.5], anK: [-0.82, 0.1], toK: [-0.66, 0.04] }),
-      head: 'bald', cape: true, fx: 'impact' },
-    { // rubber-arm pirate: stretched pistol punch, straw hat
-      id: 'pistol', dur: 520, flip: true, color: [255, 84, 56], dx: -0.55, label: '02',
-      pose: base({ head: [0.3, 1.5], neck: [0.2, 1.4], chest: [0.14, 1.3], pelvis: [0, 0.9], shoulder: [0.2, 1.36],
-        elN: [1.2, 1.46], haN: [2.35, 1.5], elF: [-0.05, 1.2], haF: [-0.22, 1.08],
-        knS: [0.32, 0.5], anS: [0.38, 0.08], toS: [0.54, 0.04], knK: [-0.3, 0.48], anK: [-0.52, 0.08], toK: [-0.36, 0.04] }),
-      head: 'hat', stretch: true, fx: 'speed' },
-    { // ninja run: forward lean, arms swept back, headband, swept spikes
-      id: 'run', dur: 520, flip: false, color: [255, 138, 26], dx: 0.1, label: '03',
-      pose: base({ head: [0.62, 1.32], neck: [0.5, 1.28], chest: [0.35, 1.2], pelvis: [0, 0.9], shoulder: [0.45, 1.25],
-        elN: [0.1, 1.2], haN: [-0.3, 1.14], elF: [0.15, 1.08], haF: [-0.22, 0.98],
-        knS: [0.5, 0.75], anS: [0.42, 0.35], toS: [0.58, 0.3], knK: [-0.2, 0.5], anK: [-0.58, 0.14], toK: [-0.42, 0.05] }),
-      head: 'ninja', fx: 'wind' },
-    { // sorcerer: hand sign by the face, white spiky hair, blindfold, domain rings
-      id: 'sign', dur: 560, flip: false, color: [122, 92, 255], dx: 0.0, label: '04',
-      pose: base({ head: [0.08, 1.68], neck: [0.05, 1.55], chest: [0.03, 1.42], shoulder: [0.05, 1.5],
-        elN: [0.26, 1.4], haN: [0.3, 1.7], elF: [0.08, 1.2], haF: [0.1, 0.97],
-        knS: [0.1, 0.5], anS: [0.08, 0.08], toS: [0.22, 0.04], knK: [-0.1, 0.5], anK: [-0.12, 0.08], toK: [0.0, 0.04] }),
-      head: 'white', fx: 'domain' },
-    { // beam-blast hero: wide stance, cupped hands at the hip, energy ball, spiky hair; fires at the end
-      id: 'beam', dur: 900, flip: false, color: [58, 160, 255], dx: 0.35, label: '05',
-      pose: base({ head: [0.12, 1.5], neck: [0.09, 1.38], chest: [0.06, 1.25], pelvis: [0, 0.8], shoulder: [0.08, 1.33],
-        elN: [-0.15, 1.15], haN: [-0.42, 1.02], elF: [-0.1, 1.08], haF: [-0.4, 0.97],
-        knS: [0.42, 0.45], anS: [0.58, 0.08], toS: [0.74, 0.04], knK: [-0.4, 0.42], anK: [-0.62, 0.08], toK: [-0.46, 0.04] }),
-      head: 'spiky', fx: 'beam' },
+    { dur: 600, color: [255, 150, 30], label: '01', figs: [[KICKER, -0.3, 1], [KO_BACK, 0.95, -1]], hit: [0.95, 1.6], cam: [0.5, 0] },
+    { dur: 560, color: [255, 70, 70], label: '02', figs: [[KNEER, -0.1, 1], [KNEED, 1.0, -1]], hit: [0.55, 1.45], cam: [0.4, 0] },
+    { dur: 560, color: [255, 205, 40], label: '03', figs: [[PUNCHER, -0.5, 1], [KO_BACK, 1.1, -1]], hit: [0.62, 1.52], cam: [0.3, 0] },
+    { dur: 560, color: [150, 100, 255], label: '04', figs: [[FALLEN, 1.15, -1], [MOUNT, 0.15, 1]], hit: [0.58, 1.1], cam: [0.5, 0] },
+    { dur: 820, color: [60, 170, 255], label: '05', figs: [[FALLEN, 1.25, -1], [VICTOR, -0.15, 1]], hit: null, cam: [0.5, 0] },
   ];
   const STARTS = []; let acc = 0;
   SLIDES.forEach((s) => { STARTS.push(acc); acc += s.dur; });
   const T_HIT = acc;
+
+  // ---- anatomy: variable-width limb profiles (half-widths in metres, sampled along the segment)
+  const P_THIGH = [0.112, 0.114, 0.104, 0.088, 0.07];
+  const P_CALF = [0.064, 0.074, 0.078, 0.064, 0.044, 0.034];
+  const P_FOOT = [0.034, 0.036, 0.03, 0.02];
+  const P_UARM = [0.06, 0.07, 0.068, 0.054, 0.042];
+  const P_FARM = [0.046, 0.054, 0.05, 0.041, 0.032];
 
   function start(opts) {
     const { canvas, onProgress, onImpact, onDone } = opts;
@@ -63,7 +77,7 @@
       W = canvas.clientWidth; H = canvas.clientHeight;
       canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      m = Math.min(H * 0.6 / 1.75, W * 0.78 / 2.6);
+      m = Math.min(H * 0.62 / 1.9, W * 0.86 / 3.1);
     };
     resize();
     window.addEventListener('resize', resize);
@@ -90,204 +104,136 @@
     const rgba = (c, a) => 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')';
     const DARK = '#040102';
 
-    function drawSlide(s, local, u) {
-      const col = s.color, P = s.pose;
-      const sgn = s.flip ? -1 : 1;
-      const gx = W * 0.5 + s.dx * m * sgn, gy = H * 0.86;
-      const X = (x) => gx + x * sgn * m, Y = (y) => gy - y * m;
+    // smooth closed path through points (Catmull-Rom -> bezier)
+    function smooth(pts) {
+      const n = pts.length, p = new Path2D();
+      p.moveTo(pts[0].x, pts[0].y);
+      for (let i = 0; i < n; i++) {
+        const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+        p.bezierCurveTo(p1.x + (p2.x - p0.x) / 6, p1.y + (p2.y - p0.y) / 6, p2.x - (p3.x - p1.x) / 6, p2.y - (p3.y - p1.y) / 6, p2.x, p2.y);
+      }
+      p.closePath();
+      return p;
+    }
+
+    // Build the list of silhouette shapes (screen-space Path2D) for one fighter.
+    function buildFighter(P, ox, flip, gx, gy) {
+      const X = (x) => gx + (ox + flip * x) * m, Y = (y) => gy - y * m;
       const pt = (k) => ({ x: X(P[k][0]), y: Y(P[k][1]) });
-      const ang = (deg) => (s.flip ? Math.PI - deg * Math.PI / 180 : deg * Math.PI / 180);
-
-      // ---- backdrop: near-black with a faint coloured glow
-      ctx.fillStyle = '#030102'; ctx.fillRect(0, 0, W, H);
-      const cxg = W / 2, cyg = gy - 0.9 * m;
-      const g = ctx.createRadialGradient(cxg, cyg, 0, cxg, cyg, Math.max(W, H) * 0.55);
-      g.addColorStop(0, rgba(col, 0.38)); g.addColorStop(0.5, rgba(col, 0.1)); g.addColorStop(1, rgba(col, 0));
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      // soft floor glow
-      ctx.save(); ctx.translate(gx, gy); ctx.scale(1, 0.12);
-      const fg = ctx.createRadialGradient(0, 0, 0, 0, 0, m * 1.8);
-      fg.addColorStop(0, rgba(col, 0.25)); fg.addColorStop(1, rgba(col, 0));
-      ctx.fillStyle = fg; ctx.beginPath(); ctx.arc(0, 0, m * 1.8, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-
-      const hand = pt('haN'), head = pt('head');
-      // ---- slide-specific backdrop effects (behind the figure)
-      ctx.save();
-      ctx.lineCap = 'round';
-      if (s.fx === 'impact') {
-        for (let i = 0; i < 4; i++) {
-          const r = (0.25 + i * 0.28 + u * 0.1) * m;
-          ctx.strokeStyle = rgba(col, 0.55 - i * 0.12); ctx.lineWidth = Math.max(2, m * 0.03 - i);
-          ctx.beginPath(); ctx.ellipse(hand.x + 0.2 * m * sgn, hand.y, r * 0.55, r, 0, 0, Math.PI * 2); ctx.stroke();
-        }
-      }
-      if (s.fx === 'impact' || s.fx === 'speed' || s.fx === 'wind') {
-        ctx.strokeStyle = rgba(col, 0.5);
-        for (let i = 0; i < 22; i++) {
-          const yy = H * (0.12 + ((i * 53) % 76) / 100), len = W * (0.12 + ((i * 29) % 30) / 100);
-          const xx = ((i * 97) % 100) / 100 * W + (s.fx === 'wind' ? -u * 120 : u * 120) * sgn * -1;
-          ctx.lineWidth = 1 + (i % 3);
-          ctx.globalAlpha = 0.25 + ((i * 7) % 5) / 12;
-          ctx.beginPath(); ctx.moveTo(xx, yy); ctx.lineTo(xx - len * sgn, yy); ctx.stroke();
-        }
-        ctx.globalAlpha = 1;
-      }
-      if (s.fx === 'domain') {
-        for (let i = 0; i < 5; i++) {
-          const r = (0.5 + i * 0.35 + u * 0.15) * m;
-          ctx.strokeStyle = rgba(col, 0.5 - i * 0.08); ctx.lineWidth = 2;
-          ctx.setLineDash([m * 0.1, m * 0.06]);
-          ctx.beginPath(); ctx.arc(cxg, cyg, r, 0, Math.PI * 2); ctx.stroke();
-        }
-        ctx.setLineDash([]);
-      }
-      if (s.fx === 'beam') {
-        // radiating rays + the energy ball cupped between the hands
-        ctx.strokeStyle = rgba(col, 0.4);
-        for (let i = 0; i < 28; i++) {
-          const a = (i / 28) * Math.PI * 2 + u * 0.4, bx = X(-0.55), by = Y(1.0);
-          ctx.lineWidth = 1 + (i % 3);
-          ctx.beginPath(); ctx.moveTo(bx + Math.cos(a) * m * 0.5, by + Math.sin(a) * m * 0.5);
-          ctx.lineTo(bx + Math.cos(a) * m * (1.2 + (i % 4) * 0.5), by + Math.sin(a) * m * (1.2 + (i % 4) * 0.5)); ctx.stroke();
-        }
-      }
-      ctx.restore();
-
-      // ---- body (anatomical tapered shapes, merged into one silhouette)
-      const parts = [];
-      const lerpP = (a, b, f) => ({ x: lerp(a.x, b.x, f), y: lerp(a.y, b.y, f) });
-      const cap = (a, ra, b, rb) => parts.push({ draw(ex) {
-        const r1 = ra * m + ex, r2 = rb * m + ex;
+      const shapes = [];
+      // limb with a width profile
+      const limb = (a, b, prof, scale) => {
         const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1, nx = -dy / len, ny = dx / len;
-        ctx.beginPath();
-        ctx.moveTo(a.x + nx * r1, a.y + ny * r1); ctx.lineTo(b.x + nx * r2, b.y + ny * r2);
-        ctx.lineTo(b.x - nx * r2, b.y - ny * r2); ctx.lineTo(a.x - nx * r1, a.y - ny * r1); ctx.closePath(); ctx.fill();
-        ctx.beginPath(); ctx.arc(a.x, a.y, r1, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.arc(b.x, b.y, r2, 0, Math.PI * 2); ctx.fill();
-      } });
-      const blob = (a, rx, ry, rot) => parts.push({ draw(ex) {
-        ctx.beginPath(); ctx.ellipse(a.x, a.y, rx * m + ex, ry * m + ex, rot || 0, 0, Math.PI * 2); ctx.fill();
-      } });
-      const poly = (pts) => parts.push({ draw(ex) {
-        ctx.beginPath(); pts.forEach((q, i) => (i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y))); ctx.closePath();
-        ctx.fill(); ctx.lineWidth = ex * 2; ctx.stroke();
-      } });
-      const leg = (hip, kn, an, to, th) => {
-        const calf = lerpP(kn, an, 0.3);
-        cap(hip, th, kn, 0.068); cap(kn, 0.066, calf, 0.072); cap(calf, 0.072, an, 0.036); cap(an, 0.034, to, 0.03);
+        const L = [], R = [];
+        prof.forEach((w, i) => {
+          const f = i / (prof.length - 1), cx = a.x + dx * f, cy = a.y + dy * f, ww = w * m * (scale || 1);
+          L.push({ x: cx + nx * ww, y: cy + ny * ww }); R.push({ x: cx - nx * ww, y: cy - ny * ww });
+        });
+        shapes.push(smooth(L.concat(R.reverse())));
+        const r = prof[0] * m * (scale || 1) * 0.98, r2 = prof[prof.length - 1] * m * (scale || 1) * 0.98;
+        const c = new Path2D(); c.arc(a.x, a.y, r, 0, Math.PI * 2); c.arc(b.x, b.y, r2, 0, Math.PI * 2); shapes.push(c);
       };
-      const arm = (sh, el, ha, fist, thin) => {
-        if (thin) { cap(sh, 0.06, el, 0.05); cap(el, 0.05, ha, 0.045); blob(ha, fist, fist); return; }
-        const bi = lerpP(sh, el, 0.4), fa = lerpP(el, ha, 0.3);
-        cap(sh, 0.062, bi, 0.066); cap(bi, 0.066, el, 0.045); cap(el, 0.048, fa, 0.054); cap(fa, 0.054, ha, 0.034);
-        blob(ha, fist, fist);
-      };
-      const hip = pt('pelvis'), shd = pt('shoulder'), ch = pt('chest'), nk = pt('neck');
+      const blob = (a, rx, ry, rot) => { const c = new Path2D(); c.ellipse(a.x, a.y, rx * m, ry * m, rot || 0, 0, Math.PI * 2); shapes.push(c); };
+      const lerpP = (a, b, f) => ({ x: lerp(a.x, b.x, f), y: lerp(a.y, b.y, f) });
 
-      // cape trailing behind the shoulders
-      if (s.cape) {
-        const back = -sgn;
-        const w = (k) => Math.sin(u * 5 + k) * 0.05;
-        poly([
-          { x: shd.x - back * 0.02 * m, y: shd.y - 0.04 * m }, { x: nk.x, y: nk.y - 0.02 * m },
-          { x: nk.x + back * 0.6 * m, y: nk.y + (0.05 + w(0)) * m }, { x: shd.x + back * 1.1 * m, y: shd.y + (0.3 + w(1)) * m },
-          { x: shd.x + back * 0.95 * m, y: shd.y + (0.75 + w(2)) * m }, { x: shd.x + back * 0.55 * m, y: shd.y + (0.62 + w(3)) * m },
-          { x: shd.x + back * 0.3 * m, y: shd.y + (0.85 + w(4)) * m }, { x: hip.x + back * 0.1 * m, y: hip.y - 0.1 * m },
-        ]);
-      }
-      leg(hip, pt('knK'), pt('anK'), pt('toK'), 0.092);
-      arm(shd, pt('elF'), pt('haF'), 0.058);
-      leg(hip, pt('knS'), pt('anS'), pt('toS'), 0.098);
-      cap(hip, 0.15, ch, 0.17);
-      blob(lerpP(hip, ch, 0.85), 0.18, 0.14, 0);
-      blob({ x: hip.x - sgn * 0.03 * m, y: hip.y - 0.02 * m }, 0.13, 0.12, 0);
-      blob(shd, 0.095, 0.095);
-      cap(ch, 0.09, nk, 0.06);
-      const hr = 0.1;
-      blob(head, hr, hr * 1.14, 0);
-      if (s.stretch) {
-        // stretched rubber arm: thin long arm, big fist
-        const el = pt('elN'), ha = pt('haN');
-        cap(shd, 0.07, el, 0.05); cap(el, 0.05, ha, 0.042); blob(ha, 0.15, 0.15);
-      } else arm(shd, pt('elN'), pt('haN'), s.id === 'punch' ? 0.1 : 0.062);
+      const pel = pt('pelvis'), ch = pt('chest'), nk = pt('neck'), hd = pt('head'), sh = pt('shoulder');
+      // legs: thigh + calf + foot with heel, shorts flare on the upper thigh
+      [['knK', 'anK', 'toK'], ['knS', 'anS', 'toS']].forEach(([kn, an, to]) => {
+        const k = pt(kn), a = pt(an), t = pt(to);
+        limb(pel, k, P_THIGH); limb(k, a, P_CALF);
+        // foot: ankle to toe with a heel bump
+        const hx = a.x - (t.x - a.x) * 0.25, hy = a.y + 0.012 * m;
+        limb({ x: hx, y: hy }, t, P_FOOT);
+        // shorts: wider fabric over the top of the thigh
+        const sEnd = lerpP(pel, k, 0.5);
+        limb(pel, sEnd, [0.128, 0.134, 0.14]);
+      });
+      // torso outline: hips, waist, ribs, lats/chest, shoulders, neck base
+      const ax = ch.x - pel.x, ay = ch.y - pel.y, al = Math.hypot(ax, ay) || 1;
+      const ux = ax / al, uy = ay / al, nx = -uy, ny = ux; // axis up and normal
+      const tp = (f, w) => ({ x: pel.x + ux * al * f + nx * w * m, y: pel.y + uy * al * f + ny * w * m });
+      const shw = 0.195;
+      const sidePts = (sgn) => [[0.0, 0.15], [0.2, 0.125], [0.5, 0.15], [0.8, 0.19], [1.0, shw]].map(([f, w]) => tp(f, sgn * w));
+      const torso = sidePts(1).concat([tp(1.12, 0.07), tp(1.12, -0.07)], sidePts(-1).reverse());
+      shapes.push(smooth(torso));
+      blob(lerpP(pel, ch, 0.9), 0.17, 0.14, Math.atan2(uy, ux));
+      limb(ch, nk, [0.1, 0.08, 0.068]);           // traps and neck
+      // head: skull + jaw
+      const hdx = hd.x - nk.x, hdy = hd.y - nk.y, hrot = Math.atan2(hdy, hdx) - Math.PI / 2;
+      blob(hd, 0.098, 0.122, hrot);
+      blob({ x: hd.x + Math.sin(hrot) * -0.02 * m + flip * 0.0, y: hd.y + 0.05 * m }, 0.08, 0.07, hrot);
+      // arms
+      [['elF', 'haF'], ['elN', 'haN']].forEach(([el, ha]) => {
+        const e = pt(el), h = pt(ha);
+        limb(sh, e, P_UARM); limb(e, h, P_FARM);
+        blob({ x: sh.x, y: sh.y }, 0.098, 0.098, 0);     // deltoid
+        const gx2 = h.x + (h.x - e.x) * 0.12, gy2 = h.y + (h.y - e.y) * 0.12;
+        blob({ x: gx2, y: gy2 }, 0.082, 0.07, Math.atan2(h.y - e.y, h.x - e.x)); // gloved fist
+      });
+      return shapes;
+    }
 
-      // hair / headgear
-      const spike = (cx, cy, deg, len, wid) => {
-        const a = ang(deg), tipx = cx + Math.cos(a) * len * m, tipy = cy - Math.sin(a) * len * m;
-        const nx = -Math.sin(a), ny = -Math.cos(a), hw = wid * m;
-        poly([{ x: cx + nx * hw, y: cy + ny * hw }, { x: tipx, y: tipy }, { x: cx - nx * hw, y: cy - ny * hw }]);
-      };
-      const hx = head.x, hy = head.y, hrp = hr * m;
-      if (s.head === 'spiky') {
-        [[100, 0.42, 0.07], [75, 0.38, 0.075], [125, 0.36, 0.07], [50, 0.3, 0.07], [150, 0.28, 0.065], [20, 0.2, 0.06], [175, 0.22, 0.06]]
-          .forEach(([d, l, w]) => spike(hx, hy - hrp * 0.35, d, l + hrp / m * 0.5, w));
-        blob({ x: hx, y: hy - hrp * 0.25 }, hr * 1.08, hr * 1.1, 0);
-      } else if (s.head === 'white') {
-        [[96, 0.34, 0.06], [78, 0.3, 0.06], [114, 0.3, 0.06], [58, 0.24, 0.055], [134, 0.24, 0.055], [30, 0.18, 0.05], [160, 0.18, 0.05]]
-          .forEach(([d, l, w]) => spike(hx, hy - hrp * 0.4, d, l + hrp / m * 0.4, w));
-        blob({ x: hx, y: hy - hrp * 0.3 }, hr * 1.06, hr * 1.06, 0);
-      } else if (s.head === 'ninja') {
-        [[125, 0.34, 0.07], [150, 0.3, 0.07], [105, 0.3, 0.07], [175, 0.24, 0.06], [80, 0.24, 0.06], [200, 0.2, 0.05]]
-          .forEach(([d, l, w]) => spike(hx, hy - hrp * 0.35, d, l + hrp / m * 0.4, w));
-        blob({ x: hx, y: hy - hrp * 0.3 }, hr * 1.08, hr * 1.06, 0);
-        // forehead protector tails fluttering behind
-        poly([{ x: hx - sgn * hrp * 0.9, y: hy - hrp * 0.15 }, { x: hx - sgn * (hrp * 0.9 + 0.35 * m), y: hy + hrp * 0.2 + Math.sin(u * 14) * 0.05 * m },
-          { x: hx - sgn * (hrp * 0.9 + 0.3 * m), y: hy + hrp * 0.45 }, { x: hx - sgn * hrp * 0.9, y: hy + hrp * 0.1 }]);
-        poly([{ x: hx - hrp, y: hy - hrp * 0.35 }, { x: hx + hrp, y: hy - hrp * 0.35 }, { x: hx + hrp, y: hy - hrp * 0.05 }, { x: hx - hrp, y: hy - hrp * 0.05 }]);
-      } else if (s.head === 'hat') {
-        // wide-brim straw hat
-        blob({ x: hx, y: hy - hrp * 0.55 }, 0.27, 0.05, sgn * -0.08);
-        blob({ x: hx, y: hy - hrp * 0.95 }, 0.14, 0.1, 0);
-      }
-      parts.forEach((q) => { /* merged pass below */ });
+    function drawSlide(s, local, u) {
+      const col = s.color;
+      const gx = W * 0.5 - s.cam[0] * m * 0.0 - 0.5 * m * (s.figs.length ? 0 : 0), gy = H * 0.84;
+      // centre the pair: shift so the scene's midpoint is at screen centre
+      let minX = 1e9, maxX = -1e9;
+      s.figs.forEach(([P, ox, flip]) => J.forEach((k) => { const x = ox + flip * P[k][0]; minX = Math.min(minX, x); maxX = Math.max(maxX, x); }));
+      const midX = (minX + maxX) / 2;
+      const Gx = W * 0.5 - midX * m;
 
-      ctx.save();
-      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-      const rim = Math.max(1.5, m * 0.011);
-      ctx.shadowColor = rgba(col, 0.95); ctx.shadowBlur = 30;
-      ctx.fillStyle = rgba([Math.min(255, col[0] + 60), Math.min(255, col[1] + 60), Math.min(255, col[2] + 60)], 1);
-      ctx.strokeStyle = ctx.fillStyle;
-      parts.forEach((q) => q.draw(rim));
-      ctx.restore();
-      ctx.fillStyle = DARK; ctx.strokeStyle = DARK;
-      parts.forEach((q) => q.draw(0));
+      ctx.fillStyle = '#030102'; ctx.fillRect(0, 0, W, H);
+      const cxg = W / 2, cyg = gy - 0.95 * m;
+      const g = ctx.createRadialGradient(cxg, cyg, 0, cxg, cyg, Math.max(W, H) * 0.55);
+      g.addColorStop(0, rgba(col, 0.34)); g.addColorStop(0.5, rgba(col, 0.09)); g.addColorStop(1, rgba(col, 0));
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      // floor line + glow
+      ctx.save(); ctx.translate(W / 2, gy); ctx.scale(1, 0.1);
+      const fg = ctx.createRadialGradient(0, 0, 0, 0, 0, m * 2.2);
+      fg.addColorStop(0, rgba(col, 0.28)); fg.addColorStop(1, rgba(col, 0));
+      ctx.fillStyle = fg; ctx.beginPath(); ctx.arc(0, 0, m * 2.2, 0, Math.PI * 2); ctx.fill(); ctx.restore();
 
-      // blindfold + eye glint on the sorcerer, headband plate etc. drawn lightly in rim colour
-      if (s.head === 'white') {
-        ctx.fillStyle = DARK; ctx.fillRect(hx - hrp * 1.02, hy - hrp * 0.12, hrp * 2.04, hrp * 0.34);
-      }
-      if (s.head === 'ninja') {
-        ctx.strokeStyle = rgba(col, 0.9); ctx.lineWidth = Math.max(1.5, m * 0.008);
-        ctx.strokeRect(hx - hrp * 0.5, hy - hrp * 0.33, hrp, hrp * 0.26);
-      }
-
-      // ---- foreground effects
-      if (s.fx === 'beam') {
-        const bx = X(-0.55), by = Y(1.0);
-        const grow = u < 0.7 ? 0.5 + u * 0.5 : 0.85;
-        const R = m * 0.34 * grow * (1 + Math.sin(local / 40) * 0.05);
+      // impact burst behind the fighters
+      let hx = 0, hy = 0;
+      if (s.hit) {
+        hx = Gx + s.hit[0] * m; hy = gy - s.hit[1] * m;
         ctx.save(); ctx.globalCompositeOperation = 'lighter';
-        const bg = ctx.createRadialGradient(bx, by, 0, bx, by, R * 2.2);
-        bg.addColorStop(0, 'rgba(255,255,255,1)'); bg.addColorStop(0.3, rgba(col, 0.95)); bg.addColorStop(1, rgba(col, 0));
-        ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(bx, by, R * 2.2, 0, Math.PI * 2); ctx.fill();
-        // the blast: a beam shooting across the screen at the end
-        if (u > 0.72) {
-          const k = easeOut((u - 0.72) / 0.28);
-          const bw = m * (0.3 + k * 1.6);
-          const x0 = bx, x1 = bx + (W - bx) * k * 1.3 * sgn * (s.flip ? -1 : 1);
-          const grad = ctx.createLinearGradient(0, by - bw, 0, by + bw);
-          grad.addColorStop(0, rgba(col, 0)); grad.addColorStop(0.5, 'rgba(255,255,255,1)'); grad.addColorStop(1, rgba(col, 0));
-          ctx.fillStyle = grad; ctx.fillRect(Math.min(x0, x1), by - bw, Math.abs(x1 - x0), bw * 2);
-          ctx.fillStyle = rgba(col, 0.35 * k); ctx.fillRect(0, 0, W, H);
+        ctx.strokeStyle = rgba(col, 0.55); ctx.lineCap = 'round';
+        for (let i = 0; i < 26; i++) {
+          const a = (i / 26) * Math.PI * 2 + 0.3, r0 = m * (0.25 + (i % 3) * 0.06), r1 = m * (0.6 + (i % 5) * 0.2 + u * 0.12);
+          ctx.lineWidth = 1 + (i % 3);
+          ctx.beginPath(); ctx.moveTo(hx + Math.cos(a) * r0, hy + Math.sin(a) * r0); ctx.lineTo(hx + Math.cos(a) * r1, hy + Math.sin(a) * r1); ctx.stroke();
         }
+        const R = m * (0.42 + u * 0.12);
+        const bg = ctx.createRadialGradient(hx, hy, 0, hx, hy, R);
+        bg.addColorStop(0, 'rgba(255,255,255,.95)'); bg.addColorStop(0.35, rgba(col, 0.7)); bg.addColorStop(1, rgba(col, 0));
+        ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(hx, hy, R, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       }
-      if (s.fx === 'impact') {
-        ctx.save(); ctx.globalCompositeOperation = 'lighter';
-        const fx = hand.x + 0.1 * m * sgn, fy = hand.y, fr = m * (0.28 + u * 0.1);
-        const fg2 = ctx.createRadialGradient(fx, fy, 0, fx, fy, fr);
-        fg2.addColorStop(0, 'rgba(255,240,200,.9)'); fg2.addColorStop(1, rgba(col, 0));
-        ctx.fillStyle = fg2; ctx.beginPath(); ctx.arc(fx, fy, fr, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+
+      // fighters: all rims first, then fills, so each frame reads as one merged silhouette
+      const shapes = [];
+      s.figs.forEach(([P, ox, flip]) => buildFighter(P, ox, flip, Gx - 0 * 0, gy).forEach((p) => shapes.push(p)));
+      // buildFighter already offsets by gx passed in (Gx) and ox; compensate: pass Gx as gx above
+      const rim = Math.max(1.6, m * 0.012);
+      ctx.save();
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      ctx.shadowColor = rgba(col, 0.95); ctx.shadowBlur = 30;
+      const rimCol = rgba([Math.min(255, col[0] + 70), Math.min(255, col[1] + 70), Math.min(255, col[2] + 70)], 1);
+      ctx.fillStyle = rimCol; ctx.strokeStyle = rimCol; ctx.lineWidth = rim * 2;
+      shapes.forEach((p) => { ctx.fill(p); ctx.stroke(p); });
+      ctx.restore();
+      ctx.fillStyle = DARK;
+      shapes.forEach((p) => ctx.fill(p));
+
+      // sweat / impact specks flying off the contact point
+      if (s.hit) {
+        ctx.save(); ctx.fillStyle = 'rgba(255,255,255,.85)';
+        for (let i = 0; i < 14; i++) {
+          const a = i * 2.4 + 0.5, d = m * (0.2 + ((i * 37) % 10) / 14 + u * 0.5);
+          ctx.beginPath(); ctx.arc(hx + Math.cos(a) * d, hy + Math.sin(a) * d * 0.8, 1.5 + (i % 3), 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.restore();
       }
     }
 
@@ -296,16 +242,13 @@
       for (let k = 0; k < SLIDES.length; k++) if (t < STARTS[k] + SLIDES[k].dur) { i = k; break; }
       const s = SLIDES[i], local = t - STARTS[i], u = clamp(local / s.dur);
       ctx.clearRect(0, 0, W, H);
-      // gentle push-in per slide, with a tiny shake on entry
-      const z = 1 + 0.07 * u;
+      const z = 1 + 0.06 * u;
       const shake = local < 120 ? (1 - local / 120) * 10 : 0;
       ctx.save();
       ctx.translate(W / 2 + (Math.random() - 0.5) * shake, H / 2 + (Math.random() - 0.5) * shake);
       ctx.scale(z, z); ctx.translate(-W / 2, -H / 2);
       drawSlide(s, local, u);
       ctx.restore();
-
-      // hard-cut transition: white flash + glitch slices
       if (local < 110 && i > 0) {
         const a = 1 - local / 110;
         for (let k = 0; k < 7; k++) {
@@ -314,13 +257,11 @@
         }
         ctx.fillStyle = 'rgba(255,255,255,' + (0.75 * a * a) + ')'; ctx.fillRect(0, 0, W, H);
       }
-      // slide index, bottom-left, mono
       ctx.fillStyle = 'rgba(255,255,255,.55)';
       ctx.font = '500 ' + Math.round(Math.max(11, W * 0.009)) + 'px ui-monospace, monospace';
       ctx.fillText('FRAME ' + s.label + ' / 0' + SLIDES.length, 34, H - 70);
-      // final white-out as the blast lands
-      if (i === SLIDES.length - 1 && u > 0.9) {
-        ctx.fillStyle = 'rgba(255,255,255,' + clamp((u - 0.9) / 0.1) + ')'; ctx.fillRect(0, 0, W, H);
+      if (i === SLIDES.length - 1 && u > 0.88) {
+        ctx.fillStyle = 'rgba(255,255,255,' + clamp((u - 0.88) / 0.12) + ')'; ctx.fillRect(0, 0, W, H);
       }
     }
 
