@@ -29,11 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
       introHandle = window.CCIntro.start({
         canvas: document.getElementById('introCanvas'),
         onProgress: (p) => { if (preloaderCount) preloaderCount.textContent = String(Math.round(p * 100)); },
-        onImpact: () => preloader.classList.add('is-flash'),
         onDone: closeIntro,
       });
       if (introSkip) introSkip.addEventListener('click', () => {
-        preloader.classList.add('is-flash');
         introHandle && introHandle.skip();
       });
     }

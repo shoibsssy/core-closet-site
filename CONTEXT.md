@@ -22,20 +22,21 @@ assets/img/    Logos and product photography
 ```
 
 ## Intro (js/intro.js): current design
-A rapid loading sequence of **four real knockout stills shown as silhouettes**, hard-cut with a white flash, glitch slices and a small shake. About 3.05 seconds in total, then a white-out into the site.
+A rapid loading sequence of **four real knockout stills shown as silhouettes**, centred and small (about 56% of viewport height) on a plain black backdrop, with a soft 220 ms crossfade between frames. About 3.05 seconds in total, then the preloader fades out. No flash, glitch, shake, zoom or burst effects.
 
-1. McGregor left on Aldo (blue)  2. Silva front kick on Belfort (gold)  3. Edwards head kick (orange)  4. Holloway exchange (red, then white-out)
+1. McGregor left on Aldo (red)  2. Silva front kick on Belfort (gold)  3. Edwards head kick (white)  4. Holloway exchange (red)
 
 How it is built:
-- Silhouettes are baked from supplied photos into `assets/img/ko/ko1-4.png` (alpha only, edges smoothed, faded where the crop cuts figures off). `intro.js` tints a rim and glow around each one, fills it near-black and draws it on a near-black backdrop.
+- Silhouettes are baked from supplied photos into `assets/img/ko/ko1-4.png` (alpha only, edges smoothed, faded where the crop cuts figures off). `intro.js` tints a thin rim and soft glow around each one in a theme colour (site red, gold, white), and fills it near-black on pure black.
 - Baking pipeline (not in the repo): `rembg` (isnet-general-use) mask, median filter, fill small holes, 2x upscale, blur and threshold. A fifth photo (tight clinch crop) cut out as a blob and was dropped.
-- `SLIDES` in `intro.js` holds `dur`, `src`, accent colour, label and `hit` (contact point as a fraction of the image, used for the impact burst).
+- `SLIDES` in `intro.js` holds `dur`, `src`, theme rim colour and label.
 - `start({ canvas, onProgress, onImpact, onDone, freezeAt })` returns `{ skip }`. Images load first; if they fail or take over 6 s the intro is skipped.
 - To add or swap a frame: cut out a new photo the same way, save as `assets/img/ko/koN.png`, add a `SLIDES` entry.
 - The original photos live only in local `source-photos/` (gitignored, agency photos).
 
 ## Owner decisions and history (do not revert without asking)
-- Dark background overall, with only a subtle colour glow behind the figures. **No big bright backdrops.**
+- Dark background overall, plain black, theme colours only (red, gold, white). **No big bright backdrops.**
+- **Calm intro: no bouncing, flashing, shaking, zooming or glitch effects.** Silhouettes stay small and centred. Follow the site theme style everywhere (owner request).
 - **No drawn or tube figures.** The owner rejected the drawn pose silhouettes as "horrible". The intro now uses photo-derived silhouettes only.
 - **No Dragon Ball or other cartoon characters any more.** Earlier versions (spiky-haired Saiyan style, a hand-drawn front stance, a 3D mocap kick, a still cartoon-hero sequence) were all replaced. The owner wants real-fighter finishing moments as **still silhouettes**, not animation.
 - Do not reintroduce Mixamo or other third-party motion assets. A Mixamo FBX and a three.js bundle were used for a short time and then removed (served raw animation files publicly, which their terms discourage).
